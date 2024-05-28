@@ -1,0 +1,48 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: apigateway
+  cloud:
+    gateway:
+      routes:
+        # ???
+#        - id: user-service
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/user-service/**
+#          filters:
+#            - RemoveRequestHeader=Cookie
+#            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+#        - id: portal-service
+#          uri: lb://PORTAL-SERVICE
+#          predicates:
+#            - Path=/portal-service/**
+#          filters:
+#            - RewritePath=/portal-service/(?<segment>.*), /$\{segment}
+      default-filters:
+        - name: GlobalFilter
+          args:
+            preLogger: true
+            postLogger: true
+      discovery:
+        locator:
+          enabled: true
+
+# config server actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, info
+
+info:
+  app:
+    name: Spring Cloud Gateway
+    description: API ??? ? ??, ????/??? ?? ??? ???? ???? ???? ??
+  swagger-ui: http://localhost:8000/webjars/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config
+
+# ??(or k8s) ?? ?? -> ?? ?? ??
+messages:
+  directory: ${user.dir}/msa-attach-volume/messages
