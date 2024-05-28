@@ -39,18 +39,69 @@ spring:
     config:
       server:
         git:
-          uri: git@github.com:meetravel-official/meetravel-backend.git
-#          username: '{cipher}ba3...'
-#          password: '{cipher}26a...'
-          search-paths: config # repository 폴더 경로
+          uri: git@github.com:meetravel-official/config.git
           default-label: main  # main branch
-          ignore-local-ssh-settings: true
+          ignore-local-ssh-settings: true # 외부 접속시 무조건 있어야 함
           skip-ssl-validation: true
-          private-key: ${GIT_SSH_KEY}
+          # private-key 가려야하는데......... 환경 변수로 넣어서 하는건 안된다ㅠ
+          # 혹시 아시는 분??
+          private-key: |
+                        -----BEGIN RSA PRIVATE KEY-----
+                        MIIJKwIBAAKCAgEA351L5CEuKIadF8AMFHoC9OIxpNzjd8QUjoR2GfGo7pjCUwwz
+                        v7j84FCTk27XyjxyTQ63NlWQgMoouDwCZygvfGf2Tf4kTtoruslsMSs3vEpGsdXW 
+                        Ncg3ldG7Ac1nvVuq46V6igwk4b4OOxiAxghV5kJuz16j+yCtCBHAUUyoPB5TYQ2a 
+                        caSBoAHrNY34p0z4OWtislu+Cs++8YVBbDwkuSZ8bOjT+IC676yyc1XBgM8qYlT2 
+                        tPuPqjC3IzBHJJgvL4vO0wVKHzD4MejF5uW4Af6/GjZO2P6qmC3VWMB+HMTxCVg0 
+                        6sDLjHflN9lw/HituLFRxD0z6sNKdudCJjLzo4nhaLTF2zbl7CnqM7yqYtmu4m0k 
+                        w5/s8Urxd8YTblGbcdoe6z8/yPcsyBjQBtdPZcRe9OND6A+1KCuPs5lLdcnoGDdd 
+                        kkr0WDTxoHr1ritdUpNbtI0YRP7SDgCOh6i+G9B+xENwlUweFpE2Q6T9RKp/ZnWv 
+                        SkKLOCpYqsaGZtlb8Lce5AXzgCuZ49f7birxvdc3joM55kTaafFFfyUZkXqJvPZj 
+                        PHUbLGZgBXudP9Ie4CgoF6clL9ri3CRARdx33Z4XLMPUO6ioXoU6bx+pQ3Igj1yl 
+                        z/p27TVr8gJ6hamu/hv2oatgtc4gxjCkElAxhgfsKpL5UX2pWGRaGEMLoq0CAwEA 
+                        AQKCAgEAjUg1zeJE5qf+kyXsu/dG7PAJC6/gLCiAEHeSotuzr2Rmys/X1leLtjJS 
+                        u4D56DX+xb75dOPk0+pmhdisb/7M2d5ZmXdr+0IPBQoESKCUq2uGdQ+1Mu/YZtlH 
+                        PWFJHTPQqdpArP31Q4ewOBhILFbR5xSsLGsQUjeX+5QznWpAlRNX/Ob6YLjeiXkM 
+                        4h5cL2ALKUQ27JfYX75YVwKpjjgFv9GYJbuJSeYTtiC38vUIuFir38rswPZ8E7yJ 
+                        yTrUiEN69KBxwZQC++gVuHropvUXKHOKzIXplWJ56IJ03IlqZMTtwciwTm4XbR3H 
+                        flzs7SdWI24tSj6dEcPnxW5htf7VPZzyNsFHh4l4JaX5IV602JzjDjKBTdMV6KXM 
+                        PV4tu3WXcarqudMfNsgVFxbIC0o2ldwHjtmo9QTbbyEM627A/k5BA39WcPsA8Mbq 
+                        JIDEHupzpqq/bprQLB/lTYiMaIen+G9E3ElYU50PccqDOHXieRcj6HHDaf++S1DU 
+                        F+GHOP3X4Phej41USEUJ1GQwFD8vkpGfrmko36ivyI2GQbnwkP0/X8M4yDFEqj8L 
+                        OdpY6A/MDpnCTVc5ED7g8uO25eK9+Z3CDc6CiXzguebO1tX7+ytVUvY0ojdTrSoY 
+                        CQ8uiFCum+cij0bhLMwxodV3PTOe6ylD1zrQcfJ9HG4h0lLQOcUCggEBAPgzhG5L 
+                        NwyF2AF3B1RF9PfpR+u1MejpQsSD+ek8l80i88c88P/OA5C6bhDxlZftEzucycFL 
+                        xCJp+e05fOYU9uuxo07UeHi2LvOMiLY1caS2UOjaj+n1l/5JQ+sSOnK+vaTgFd1R 
+                        Q33TOkSSzKu7e9KwvRN61n0DulqEOpDf9NaHZw6R5su/UAdMp0sIr2O695kO6H03 
+                        QjWkxuv81dH+GTBGg6FgjpjiAFLeSN8QdY6VTHwC2nb3y4oiV2IqAOcBXxb40cnf 
+                        XZitJWGSuxYESP7Ym13WONh+9rwGRci1XCkm368Zw8NrdyYk+xvwN10qr7G+OZMe 
+                        sgW7Kx+24JtKFvsCggEBAOakAfeJ7PVpWhAo/Ld9gOtpmc2zTY5ov8tzPYl6w4dm 
+                        27l38uES9NfUMgF+cIqLvRxs9JbNP3ijj1sN5+/HzZ6a2aHG4YOjfOytGrfbQyGu 
+                        lebukMY8LETflVEkIc8l5yrmniM5PKpVoBAxHnhYb/8Kpz8Z8v6l2OkgT+bqPvYk 
+                        /GeU2P+YMWUWezwx/vnWbvzQZ7LJGFGDsJO31x4PNEVjdahSp15Hp5ey3rX3w40q 
+                        F2YHrgKKo9qI4JO0+8pzrdHS+XfeJx//u0v5FHYkjcpYuXffnnpPuhjX5nUjKIFf 
+                        fWWLxJ3oM5yl+TIcxlzECU96QvzzQW6/u/JwdL2unHcCggEBAKMsy23viRt0ixQ7 
+                        etgOvgSWm6/9CfkEEd88nPqX2X0F85sTF6Y1fOaTinUdPqoJNNHGPGYWN7YgUi2B 
+                        0/k34zYFLUZQLXu+2pNH20FfVX1iV0MfHepEik6lQD+1VjPF7swMfpNoL6TzT6Vx 
+                        lZl5wug7RbMe2RCLeOK1eANzGXZIwpozlbZx6l1CKeIMrbI1Yz5/LJ3VzHOUByty 
+                        p+hM06aHVVatMlKUkn3ooaP1IDRDN2t4PMRmGKyR8z0YPEui/S8PGm1Lqi8L9j11 
+                        yAWrf4n8QfipM+oxXmky/oH7qcFsSzbFC4zYhBbRzT0K6nsX6zZBx3xPe96EtM8+ 
+                        3d96EC0CggEBAIfBO4MnhPlChIeEiJO8ZJisNKJ2Co1rLJElCLCWOObG7UfyyVwf 
+                        m0w6kyB7+uQhsjM8Eo98ygJJS4UN31osoePcQ4NMm8qu/UYV8ecMQSxfJc6i10ZH 
+                        fssfSzVSbjAOoE2JJsWW2BVuhuNg9g1iCLH25FBpBrVKiy1VHpLNiDe7t3GElGGF 
+                        hHV60RiyWOFXjUZzqMX8RbsdJ18bU5xW2K6LB2MHG4qL5KKO3zX+WvUJNHKSzKKk 
+                        ViO4c2+dlKMqicI6Syp58U+NaAIk3x1XELpslOZxEkfuC5y53+VMx3e27AlMRnOn 
+                        jFGFA/OyKjPKE6zbSvi2eeolIwxlkuFfGKsCggEBAOZ+2mdZEpVLaUb8d0FwoEos 
+                        uytv+TTsM3LoCCCUwJxH/gCQMyUvsgiUDDWwIV9K1pJQdT8NLz5cCuOkC6+58H2l 
+                        ytvX26MjgTbb34Abccbi2eHKPXgoHxeGsfSCXzWwsvU9Iq5Gb/yNBUorSJpwtVto 
+                        9Q76xZsCm4nBohAj0A1f3Q7L/bA2THKzaJIUQ4wMfdjEEtAJUrGNqV+mStO6HyeC 
+                        ZaQWsY8zsTcuyuRgQ+YWtWqStjI9vtf246xvaFIIKdt7XEngVkxruXusL/09ge68 
+                        KgBz+08tslzcvEoTKeCg4fykS4PXTanHIynK2d/FFUDdWen/wC2qQvMzU7ov9as= 
+                        -----END RSA PRIVATE KEY-----
     bus:
-      enabled: ture # webhook 활성화: /monitor 엔드포인트 호출 가능해진다
+      enabled: true # webhook 활성화: /monitor 엔드포인트 호출 가능해진다
 
 ---
+# prod 프로필을 추후에 분리해서 config 폴더에 집어넣기
 spring.config.activate.on-profile: prod
 
 spring:
@@ -60,13 +111,60 @@ spring:
     config:
       server:
         git:
-          uri: git@github.com:meetravel-official/meetravel-backend.git
-          #          username: '{cipher}ba3...'
-          #          password: '{cipher}26a...'
-          search-paths: config # repository 폴더 경로
+          uri: git@github.com:meetravel-official/config.git
           default-label: main  # main branch
-          ignore-local-ssh-settings: true
-#          skip-ssl-validation: true
-          private-key: ${GIT_SSH_KEY}
+          ignore-local-ssh-settings: true # 외부 접속시 무조건 있어야 함
+          private-key: |
+                        -----BEGIN RSA PRIVATE KEY-----
+                        MIIJKwIBAAKCAgEA351L5CEuKIadF8AMFHoC9OIxpNzjd8QUjoR2GfGo7pjCUwwz
+                        v7j84FCTk27XyjxyTQ63NlWQgMoouDwCZygvfGf2Tf4kTtoruslsMSs3vEpGsdXW 
+                        Ncg3ldG7Ac1nvVuq46V6igwk4b4OOxiAxghV5kJuz16j+yCtCBHAUUyoPB5TYQ2a 
+                        caSBoAHrNY34p0z4OWtislu+Cs++8YVBbDwkuSZ8bOjT+IC676yyc1XBgM8qYlT2 
+                        tPuPqjC3IzBHJJgvL4vO0wVKHzD4MejF5uW4Af6/GjZO2P6qmC3VWMB+HMTxCVg0 
+                        6sDLjHflN9lw/HituLFRxD0z6sNKdudCJjLzo4nhaLTF2zbl7CnqM7yqYtmu4m0k 
+                        w5/s8Urxd8YTblGbcdoe6z8/yPcsyBjQBtdPZcRe9OND6A+1KCuPs5lLdcnoGDdd 
+                        kkr0WDTxoHr1ritdUpNbtI0YRP7SDgCOh6i+G9B+xENwlUweFpE2Q6T9RKp/ZnWv 
+                        SkKLOCpYqsaGZtlb8Lce5AXzgCuZ49f7birxvdc3joM55kTaafFFfyUZkXqJvPZj 
+                        PHUbLGZgBXudP9Ie4CgoF6clL9ri3CRARdx33Z4XLMPUO6ioXoU6bx+pQ3Igj1yl 
+                        z/p27TVr8gJ6hamu/hv2oatgtc4gxjCkElAxhgfsKpL5UX2pWGRaGEMLoq0CAwEA 
+                        AQKCAgEAjUg1zeJE5qf+kyXsu/dG7PAJC6/gLCiAEHeSotuzr2Rmys/X1leLtjJS 
+                        u4D56DX+xb75dOPk0+pmhdisb/7M2d5ZmXdr+0IPBQoESKCUq2uGdQ+1Mu/YZtlH 
+                        PWFJHTPQqdpArP31Q4ewOBhILFbR5xSsLGsQUjeX+5QznWpAlRNX/Ob6YLjeiXkM 
+                        4h5cL2ALKUQ27JfYX75YVwKpjjgFv9GYJbuJSeYTtiC38vUIuFir38rswPZ8E7yJ 
+                        yTrUiEN69KBxwZQC++gVuHropvUXKHOKzIXplWJ56IJ03IlqZMTtwciwTm4XbR3H 
+                        flzs7SdWI24tSj6dEcPnxW5htf7VPZzyNsFHh4l4JaX5IV602JzjDjKBTdMV6KXM 
+                        PV4tu3WXcarqudMfNsgVFxbIC0o2ldwHjtmo9QTbbyEM627A/k5BA39WcPsA8Mbq 
+                        JIDEHupzpqq/bprQLB/lTYiMaIen+G9E3ElYU50PccqDOHXieRcj6HHDaf++S1DU 
+                        F+GHOP3X4Phej41USEUJ1GQwFD8vkpGfrmko36ivyI2GQbnwkP0/X8M4yDFEqj8L 
+                        OdpY6A/MDpnCTVc5ED7g8uO25eK9+Z3CDc6CiXzguebO1tX7+ytVUvY0ojdTrSoY 
+                        CQ8uiFCum+cij0bhLMwxodV3PTOe6ylD1zrQcfJ9HG4h0lLQOcUCggEBAPgzhG5L 
+                        NwyF2AF3B1RF9PfpR+u1MejpQsSD+ek8l80i88c88P/OA5C6bhDxlZftEzucycFL 
+                        xCJp+e05fOYU9uuxo07UeHi2LvOMiLY1caS2UOjaj+n1l/5JQ+sSOnK+vaTgFd1R 
+                        Q33TOkSSzKu7e9KwvRN61n0DulqEOpDf9NaHZw6R5su/UAdMp0sIr2O695kO6H03 
+                        QjWkxuv81dH+GTBGg6FgjpjiAFLeSN8QdY6VTHwC2nb3y4oiV2IqAOcBXxb40cnf 
+                        XZitJWGSuxYESP7Ym13WONh+9rwGRci1XCkm368Zw8NrdyYk+xvwN10qr7G+OZMe 
+                        sgW7Kx+24JtKFvsCggEBAOakAfeJ7PVpWhAo/Ld9gOtpmc2zTY5ov8tzPYl6w4dm 
+                        27l38uES9NfUMgF+cIqLvRxs9JbNP3ijj1sN5+/HzZ6a2aHG4YOjfOytGrfbQyGu 
+                        lebukMY8LETflVEkIc8l5yrmniM5PKpVoBAxHnhYb/8Kpz8Z8v6l2OkgT+bqPvYk 
+                        /GeU2P+YMWUWezwx/vnWbvzQZ7LJGFGDsJO31x4PNEVjdahSp15Hp5ey3rX3w40q 
+                        F2YHrgKKo9qI4JO0+8pzrdHS+XfeJx//u0v5FHYkjcpYuXffnnpPuhjX5nUjKIFf 
+                        fWWLxJ3oM5yl+TIcxlzECU96QvzzQW6/u/JwdL2unHcCggEBAKMsy23viRt0ixQ7 
+                        etgOvgSWm6/9CfkEEd88nPqX2X0F85sTF6Y1fOaTinUdPqoJNNHGPGYWN7YgUi2B 
+                        0/k34zYFLUZQLXu+2pNH20FfVX1iV0MfHepEik6lQD+1VjPF7swMfpNoL6TzT6Vx 
+                        lZl5wug7RbMe2RCLeOK1eANzGXZIwpozlbZx6l1CKeIMrbI1Yz5/LJ3VzHOUByty 
+                        p+hM06aHVVatMlKUkn3ooaP1IDRDN2t4PMRmGKyR8z0YPEui/S8PGm1Lqi8L9j11 
+                        yAWrf4n8QfipM+oxXmky/oH7qcFsSzbFC4zYhBbRzT0K6nsX6zZBx3xPe96EtM8+ 
+                        3d96EC0CggEBAIfBO4MnhPlChIeEiJO8ZJisNKJ2Co1rLJElCLCWOObG7UfyyVwf 
+                        m0w6kyB7+uQhsjM8Eo98ygJJS4UN31osoePcQ4NMm8qu/UYV8ecMQSxfJc6i10ZH 
+                        fssfSzVSbjAOoE2JJsWW2BVuhuNg9g1iCLH25FBpBrVKiy1VHpLNiDe7t3GElGGF 
+                        hHV60RiyWOFXjUZzqMX8RbsdJ18bU5xW2K6LB2MHG4qL5KKO3zX+WvUJNHKSzKKk 
+                        ViO4c2+dlKMqicI6Syp58U+NaAIk3x1XELpslOZxEkfuC5y53+VMx3e27AlMRnOn 
+                        jFGFA/OyKjPKE6zbSvi2eeolIwxlkuFfGKsCggEBAOZ+2mdZEpVLaUb8d0FwoEos 
+                        uytv+TTsM3LoCCCUwJxH/gCQMyUvsgiUDDWwIV9K1pJQdT8NLz5cCuOkC6+58H2l 
+                        ytvX26MjgTbb34Abccbi2eHKPXgoHxeGsfSCXzWwsvU9Iq5Gb/yNBUorSJpwtVto 
+                        9Q76xZsCm4nBohAj0A1f3Q7L/bA2THKzaJIUQ4wMfdjEEtAJUrGNqV+mStO6HyeC 
+                        ZaQWsY8zsTcuyuRgQ+YWtWqStjI9vtf246xvaFIIKdt7XEngVkxruXusL/09ge68 
+                        KgBz+08tslzcvEoTKeCg4fykS4PXTanHIynK2d/FFUDdWen/wC2qQvMzU7ov9as= 
+                        -----END RSA PRIVATE KEY-----
     bus:
-      enabled: ture # webhook 활성화: /monitor 엔드포인트 호출 가능해진다
+      enabled: true # webhook 활성화: /monitor 엔드포인트 호출 가능해진다
