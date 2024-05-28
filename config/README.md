@@ -4,6 +4,14 @@
 
 아래 내용은 요약한 것. 더 자세한 내용은 가장 아래의 Reference 1 & 2 링크 확인할 것.
 
+## 실행 방식 (현재 계속 업데이트 되는 중)
+
+1. application.yml 로컬(native 프로필)에 있는 외부 config 폴더 위치(이 폴더 말고)를 자신의 환경에 맞게 지정해준다.
+2. https://docs.spring.io/spring-cloud-config/docs/current/reference/html/#_authentication 여길 참고해서 rsa 키 만들고 깃허브에 공개키 등록하기
+3. 개인키는 sandbox, prod 프로필의 private-key 속성에 자신의 개인키를 '규격에 맞게' 똑같은 형식으로 덮어씌워준다.
+4. 이 폴더의 최상위에 있는 `rabbitmq_docker_run.sh`를 실행시켜준다.
+5. 실행시 프로필을 잘 설정해주고 실행해서 동작을 살펴본다.
+
 ## 동작 방식
 
 상위 레포지토리 중 `config`에 저장되어 있는 설정 파일을 중개해주는 역할
