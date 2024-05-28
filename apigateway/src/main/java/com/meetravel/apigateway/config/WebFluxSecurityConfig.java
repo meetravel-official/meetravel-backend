@@ -3,13 +3,8 @@ package com.meetravel.apigateway.config;
 import com.meetravel.apigateway.exception.CustomAccessDeniedHandler;
 import com.meetravel.apigateway.exception.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 /**
@@ -54,10 +49,10 @@ public class WebFluxSecurityConfig {
                 // handlers for 401 and 403
                 .exceptionHandling((exceptionHandling) ->
                         exceptionHandling.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-                                         .accessDeniedHandler(new CustomAccessDeniedHandler()))
-                //rest services don't have a login form
+                                .accessDeniedHandler(new CustomAccessDeniedHandler()))
+                // rest services don't have a login form
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-                //disabled basic authentication
+                // disabled basic authentication
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .headers(headers -> headers.frameOptions(ServerHttpSecurity.HeaderSpec.FrameOptionsSpec::disable))
                 .authorizeExchange((authorize) -> authorize
