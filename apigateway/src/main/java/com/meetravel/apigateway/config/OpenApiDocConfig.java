@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * OpenApi를 통해 Swagger에 보여질 API를 그룹화한다.
@@ -34,7 +33,7 @@ public class OpenApiDocConfig {
                 .forEach(routeDefinition -> {
                     String name = routeDefinition.getId();
                     swaggerUiConfigParameters.addGroup(name);
-                    GroupedOpenApi. builder().pathsToMatch("/" + name + "/**").group(name).build();
+                    GroupedOpenApi.builder().pathsToMatch("/" + name + "/**").group(name).build();
                 });
 
         return groups;
