@@ -39,16 +39,14 @@ spring:
     config:
       server:
         git:
-          uri: git@github.com:meetravel-official/meetravel-backend.git
-#          username: '{cipher}ba3...'
-#          password: '{cipher}26a...'
-          search-paths: config # repository 폴더 경로
+          uri: git@github.com:meetravel-official/config.git
           default-label: main  # main branch
           ignore-local-ssh-settings: true
           skip-ssl-validation: true
-          private-key: ${GIT_SSH_KEY}
+          private-key: |
+                        ${GIT_SSH_KEY}
     bus:
-      enabled: ture # webhook 활성화: /monitor 엔드포인트 호출 가능해진다
+      enabled: true # webhook 활성화: /monitor 엔드포인트 호출 가능해진다
 
 ---
 spring.config.activate.on-profile: prod
@@ -60,13 +58,10 @@ spring:
     config:
       server:
         git:
-          uri: git@github.com:meetravel-official/meetravel-backend.git
-          #          username: '{cipher}ba3...'
-          #          password: '{cipher}26a...'
-          search-paths: config # repository 폴더 경로
+          uri: git@github.com:meetravel-official/config.git
           default-label: main  # main branch
           ignore-local-ssh-settings: true
-#          skip-ssl-validation: true
-          private-key: ${GIT_SSH_KEY}
+          private-key: |
+                        ${GIT_SSH_KEY}
     bus:
-      enabled: ture # webhook 활성화: /monitor 엔드포인트 호출 가능해진다
+      enabled: true # webhook 활성화: /monitor 엔드포인트 호출 가능해진다
