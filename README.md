@@ -35,7 +35,7 @@
 
 > **Service Discovery** - Eureka Server
 
-(README 링크 추가하기)
+[Discovery - README.md](https://github.com/meetravel-official/meetravel-backend/blob/main/discovery/README.md#서비스-등록을-위한-설정)
 
 > **Distributed Tracing** - Spring Cloud Sleuth + Zipkin
 
