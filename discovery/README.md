@@ -13,6 +13,7 @@
 해당 서버에 만든 서비스를 등록하고 싶다면 아래의 설정들을 추가한다.
 
 `build.gradle`
+
 ```groovy
 dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
@@ -20,7 +21,9 @@ dependencies {
 ```
 
 `XXXServiceApplication.java`
+
 ```java
+
 @EnableDiscoveryClient // discovery client 활성화
 @SpringBootApplication
 public class XXXServiceApplication {
@@ -35,6 +38,7 @@ public class XXXServiceApplication {
 아래는 config 저장소에 있는 관련 정보다.
 
 `meetravel-official/config/application.yml`
+
 ```yaml
 eureka:
   instance:
