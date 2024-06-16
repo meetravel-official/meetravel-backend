@@ -9,6 +9,8 @@ spring:
     port: 5672
     username: guest
     password: guest
+  profiles:
+    active: native
 
 # config server actuator
 management:
@@ -25,8 +27,11 @@ spring:
     config:
       server:
         native:
-          search-locations: file://${user.home}/works/meetravel/config # MacOS
-#          search-locations: ${search.location:file:///${user.home}/works/meetravel/config} # Windows
+ #         search-locations: file://${user.home}/works/meetravel/config # MacOS
+         # search-locations: ${search.location:file:///${user.home}/Desktop/Project/meetravel/config} # Windows
+          search-locations: file:///${user.home}/Desktop/Project/meetravel/config
+
+          #search-locations: file:///${user.home}\Documents\config-repo
   # 로컬에서 작업할 땐 각자의 환경에 맞춰줘야 합니다!
 
 ---

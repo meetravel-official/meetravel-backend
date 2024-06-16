@@ -45,9 +45,9 @@ management:
 info:
   app:
     name: Spring Cloud Gateway
-    description: API ¶ó¿ìÆÃ ¹× º¸¾È, ¸ð´ÏÅÍ¸µ/¸ÞÆ®¸¯ µîÀÇ ±â´ÉÀ» °£´ÜÇÏ°í È¿°úÀûÀÎ ¹æ¹ýÀ¸·Î Á¦°ø
+    description: API ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½Í¸ï¿½/ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ È¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
   swagger-ui: http://localhost:8000/webjars/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config
 
-# docker(or k8s)ÇÏ°í ¸ÂÃß±â
+# docker(or k8s)ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ß±ï¿½
 messages:
   directory: ${user.dir}/msa-attach-volume/messages
