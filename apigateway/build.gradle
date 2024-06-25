@@ -41,7 +41,7 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
 
     // logstash logback
-    implementation 'net.logstash.logback:logstash-logback-encoder:7.6'
+    implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
 
     // swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.5.0'
