@@ -1,7 +1,6 @@
 package com.meetravel.user_service.domain.user.entity;
 
-import com.meetravel.user_service.domain.user.enums.Role;
-import com.meetravel.user_service.domain.user.enums.SocialType;
+import com.meetravel.user_service.domain.user.enums.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,9 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "user")
@@ -30,6 +27,7 @@ public class UserEntity implements UserDetails {
     private String userId;
 
     @Column(name = "PASSWORD")
+    @Builder.Default
     private String password = ""; // Default 값으로 빈 문자열 설정
 
     @Column(name = "NAME")
@@ -44,14 +42,17 @@ public class UserEntity implements UserDetails {
     @Column(name = "PROFILE_IMAGE")
     private String profileImage;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "TRAVEL_COUNT")
-    private Integer travelCount;
+    private TravelFrequency travelFrequency;
 
-    @Column(name = "TRAVEL_STYLE1")
-    private String travelStyle1;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TIME_MANAGEMENT")
+    private TimeManagement timeManagement;
 
-    @Column(name = "TRAVEL_STYLE2")
-    private String travelStyle2;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "PLANNING_STYLE")
+    private PlanningStyle planningStyle;
 
     @Column(name = "MBTI")
     private String mbti;
@@ -62,21 +63,37 @@ public class UserEntity implements UserDetails {
     @Column(name = "INTRO")
     private String intro;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "SOCIAL_TYPE")
-    @Enumerated(EnumType.STRING)
-    private SocialType socialType; // KAKAO, APPLE
+    private SocialType socialType; // KAKAO
 
-    @Column(name = "ROLE")
     @Enumerated(EnumType.STRING)
+    @Column(name = "ROLE")
     private Role role;
 
+    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<UserPrefTravelDestEntity> userPrefTravelDestEntities = new HashSet<>();
 
+
+    // 회원의 선호여행지 추가(등록)
+    public void addUserPrefTravelDest(UserPrefTravelDestEntity userPrefTravelDestEntity) {
+        userPrefTravelDestEntities.add(userPrefTravelDestEntity);
+    }
+
+
+    /**
+     * UserDetails implements 메소드
+     *
+     * @return
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(role.name()));
         return authorities;
     }
+
     @Override
     public String getUsername() {
         return null;
