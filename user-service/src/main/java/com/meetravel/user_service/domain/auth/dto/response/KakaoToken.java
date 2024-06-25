@@ -1,9 +1,7 @@
 package com.meetravel.user_service.domain.auth.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 public class KakaoToken {
@@ -42,5 +40,4 @@ public class KakaoToken {
         private String picture;
         private String email;
     }
-
 }
