@@ -29,7 +29,7 @@ public class WebFluxSecurityConfig {
 
     private final static String[] PERMITALL_ANTPATTERNS = {
             "/", "/csrf",
-            "/user-service/login",
+            "/user-service/auth/kakao/login",
             "/?*-service/api/v1/messages/**", "/?*-service/actuator/?*", "/actuator/?*",
             "/v3/api-docs/**", "/?*-service/v3/api-docs",
             "**/configuration/*", "/swagger*/**", "/webjars/**"
