@@ -5,6 +5,7 @@ import com.meetravel.user_service.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -32,7 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
 
         // UserDetails 객체를 생성합니다.
-        return new org.springframework.security.core.userdetails.User(
+        return new User(
                 user.getUserId(),
                 password, // 패스워드는 빈 문자열로 설정합니다.
                 authorities
