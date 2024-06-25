@@ -20,5 +20,4 @@ public interface KakaoAuthFeignClient {
 
     @PostMapping(value = "/oauth/tokeninfo", consumes = "application/x-www-form-urlencoded;charset=utf-8")
     KakaoToken.IdToken getIdTokenInfo(@RequestParam("id_token") String idToken);
-
 }
