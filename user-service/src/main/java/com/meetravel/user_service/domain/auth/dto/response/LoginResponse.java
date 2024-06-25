@@ -19,6 +19,6 @@ public class LoginResponse {
     private Long accessTokenExpiresIn;
     private Long refreshTokenExpiresIn;
     private SocialType socialType;
-    private String userYn;
+    private boolean isRegisteredUser;
 
 }
