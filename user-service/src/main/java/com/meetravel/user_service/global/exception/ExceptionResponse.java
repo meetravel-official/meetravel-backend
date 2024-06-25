@@ -13,5 +13,4 @@ public class ExceptionResponse {
     int code;
     // 에러 메시지
     String message;
-
 }
