@@ -10,7 +10,6 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +17,8 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -36,7 +37,7 @@ public class JwtService {
 
     }
 
-    public LoginResponse createJwtToken(String userId){
+    public LoginResponse createJwtToken(String userId, boolean isTemporary) {
 
         long now = (new Date()).getTime();
 
@@ -44,12 +45,12 @@ public class JwtService {
         Date refreshTokenExpiresIn = new Date(now + jwtProperties.getRefresh().getExpiration());
 
         // Access Token 생성
-        String accessToken = createAccessToken(userId,accessTokenExpiresIn);
+        String accessToken = createAccessToken(userId, isTemporary, accessTokenExpiresIn);
         // Refresh Token 생성
-        String refreshToken = createRefreshToken(userId,refreshTokenExpiresIn);
+        String refreshToken = createRefreshToken(userId, isTemporary, refreshTokenExpiresIn);
 
         return LoginResponse.builder()
-                .grantType("Bearer")
+                .grantType("Bearer ")
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
@@ -57,23 +58,37 @@ public class JwtService {
                 .build();
     }
 
-    public String createAccessToken(String userId, Date expirationTime){
+    public Map<String, Object> setClaims(String userId, boolean isTemporary) {
+        // 클레임 설정
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+        claims.put("isTemporary", isTemporary);
+        return claims;
+    }
+
+    public String createAccessToken(String userId, boolean isTemporary, Date expirationTime) {
+
+        // 클레임 설정
+        Map<String, Object> claims = this.setClaims(userId, isTemporary);
+
         return Jwts.builder()
                 .setSubject(TokenType.ACCESS.name())    // 토큰 제목
                 .setIssuedAt(new Date())                // 토큰 발급 시간
                 .setExpiration(expirationTime)          // 토큰 만료 시간
-                .claim("userId", userId)                  // 회원 아이디
+                .setClaims(claims)                  // 클레임 설정
                 .signWith(key)
                 .compact();
 
     }
 
-    public String createRefreshToken(String userId, Date expirationTime) {
+    public String createRefreshToken(String userId, boolean isTemporary, Date expirationTime) {
+        // 클레임 설정
+        Map<String, Object> claims = this.setClaims(userId, isTemporary);
         return Jwts.builder()
                 .setSubject(TokenType.REFRESH.name())   // 토큰 제목
                 .setIssuedAt(new Date())                // 토큰 발급 시간
                 .setExpiration(expirationTime)          // 토큰 만료 시간
-                .claim("userId", userId)      // 회원 아이디
+                .setClaims(claims)      // 클레임 설정
                 .signWith(key)
                 .setHeaderParam("typ", "JWT")
                 .compact();
@@ -105,7 +120,6 @@ public class JwtService {
         }
     }
 
-    // accessToken
     private Claims parseClaims(String token) {
         try {
             return Jwts.parserBuilder()
@@ -121,7 +135,7 @@ public class JwtService {
     public String getAccessToken(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(jwtProperties.getAccess().getHeader());
 
-        if(authorizationHeader != null && !authorizationHeader.equals("")){
+        if (authorizationHeader != null && !authorizationHeader.equals("")) {
             if (authorizationHeader.startsWith("Bearer") && authorizationHeader.length() > 7) {
                 String accessToken = authorizationHeader.substring(7); // accesstoken 추출
                 return accessToken;
@@ -135,7 +149,7 @@ public class JwtService {
     public String getRefreshToken(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(jwtProperties.getRefresh().getHeader());
 
-        if(authorizationHeader != null && !authorizationHeader.equals("")){
+        if (authorizationHeader != null && !authorizationHeader.equals("")) {
             if (authorizationHeader.startsWith("Bearer") && authorizationHeader.length() > 7) {
                 String refreshToken = authorizationHeader.substring(7); // refresh 추출
                 return refreshToken;
@@ -151,13 +165,24 @@ public class JwtService {
     }
 
     // 토큰에서 userId 추출
-    public String getUserId(String accessToken) {
+    public String getUserId(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
-                .parseClaimsJws(accessToken)
+                .parseClaimsJws(token)
                 .getBody();
         return claims.get("userId", String.class);
+    }
+
+
+    // 토큰에서 임시토큰여부 추출
+    public boolean getIsTemporary(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("isTemporary", Boolean.class);
     }
 
     public Long getExpiration(String accessToken) {
@@ -177,7 +202,4 @@ public class JwtService {
     public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
         response.setHeader("Authorization-refresh", "Bearer " + refreshToken);
     }
-
 }
-
-
