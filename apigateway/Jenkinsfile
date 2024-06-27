@@ -1,0 +1,49 @@
+// https://github.com/jenkinsci/kubernetes-plugin
+podTemplate(
+    name: "jenkins-slave",
+    serviceAccount: "jenkins",
+    containers: [
+        containerTemplate(name: "docker", image: "docker", ttyEnabled: true, command: 'cat'),
+        containerTemplate(name: "kubectl", image: "lachlanevenson/k8s-kubectl:v1.25.4", ttyEnabled: true, command: 'cat')
+    ],
+    volumes: [
+        hostPathVolume(mountPath: "/var/run/docker.sock", hostPath: "/var/run/docker.sock") // DooD
+    ]
+) {
+    node(POD_LABEL) {
+        def now = java.time.LocalDateTime.now()
+        def projectId = "apigateway" // 프로젝트 아이디
+
+        // docker
+        // TODO: 이거 나중에 AWS에 젠킨스 올리고 크레덴셜에 아래 이름으로 된 거로 meetravel.official 추가해줘야 함.
+        def dockerhubCredentialsId = "username-password-dockerhub" // 젠킨스 도커허브 자격증명
+        def dockerImage = "meetravel/meetravel-backend-${projectId}" // 도커허브 이미지
+        def dockerImageTag = "latest" // 도커허브 이미지 태그
+
+        stage("git") {
+            checkout scm
+        }
+
+        stage("gradle") {
+            sh "./gradlew wrap --gradle-version=8.7 --daemon"
+            sh "./gradlew bootJar"
+        }
+
+        stage("docker") {
+            container("docker") {
+                withCredentials([usernamePassword(credentialsId: "${dockerhubCredentialsId}", passwordVariable: "password", usernameVariable: "username")]) {
+                    sh "docker login -u $username -p $password"
+                    sh "docker build -f DockerfileK8s -t ${dockerImage}:${dockerImageTag} ."
+                    sh "docker push ${dockerImage}:${dockerImageTag}"
+                }
+            }
+        }
+
+        stage( "kubernetes" ) {
+            container("kubectl") {
+                sh "kubectl rollout restart deployment ${projectId}-deployment"
+                sh "kubectl annotate deployment.apps/${projectId}-deployment kubernetes.io/change-cause='Image updated at ${now} by ${env.BUILD_TAG}.'"
+            }
+        }
+    }
+}
