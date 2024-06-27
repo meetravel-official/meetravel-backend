@@ -25,10 +25,8 @@ podTemplate(
         }
 
         stage("gradle") {
-            dir("meetravel-backend/config") {
-                sh "./gradlew wrap --gradle-version=8.7 --daemon"
-                sh "./gradlew bootJar"
-            }
+            sh "./gradlew wrap --gradle-version=8.7 --daemon"
+            sh "./gradlew bootJar"
         }
 
         stage("docker") {
