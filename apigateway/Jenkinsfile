@@ -39,7 +39,7 @@ podTemplate(
             container("kaniko") {
                 sh '''
                     /kaniko/executor --context `pwd` \
-                                     --dockerfile DockerfileK8s \
+                                     --dockerfile `pwd`/DockerfileK8s \
                                      --destination ${dockerImage}:${dockerImageTag}
                 '''
             }
