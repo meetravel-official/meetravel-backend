@@ -25,10 +25,9 @@ podTemplate(
         }
 
         stage("gradle") {
-            dir("meetravel-backend/apigateway") {
-                sh "./gradlew wrap --gradle-version=8.7 --daemon"
-                sh "./gradlew bootJar"
-            }
+            sh "cd apigateway"
+            sh "./gradlew wrap --gradle-version=8.7 --daemon"
+            sh "./gradlew bootJar"
         }
 
         stage("docker") {
