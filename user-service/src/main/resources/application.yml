@@ -1,0 +1,51 @@
+server:
+  port: 8080 # random port
+
+spring:
+  application:
+    name: user-service
+
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    format-sql: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MEETRAVEL_DB_LOCAL_URL}
+    username: ${MEETRAVEL_DB_USERNAME}
+    password: ${MEETRAVEL_DB_PASSWORD}
+
+jwt:
+  secretKey: ${MEETRAVEL_JWT_SECRET_KEY}
+
+  access:
+    expiration: 1800000 # 30? (1000L(ms -> s) * 60L(s -> m) * 30L(m -> h))
+    header: Authorization
+
+  refresh:
+    expiration: 1209600000 #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> ??) * 14(2?))
+    header: Authorization-refresh
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    tagsSorter: alpha
+    operations-sorter: alpha
+    display-request-duration: true
+
+
+oauth:
+  kakao:
+    auth-url: https://kauth.kakao.com
+    grant_type: authorization_code
+    client_id: ${KAKAO_CLIENT_ID} # Client Id
+    client_secret: ${KAKAO_CLIENT_SECRET} # Client Secret 키
+    redirect_uri: ${KAKAO_REDIRECTED_URI}
+    content_type: application/x-www-form-urlencoded
