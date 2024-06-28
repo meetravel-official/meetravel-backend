@@ -9,7 +9,7 @@ podTemplate(
     ],
     volumes: [
         hostPathVolume(mountPath: "/var/run/docker.sock", hostPath: "/var/run/docker.sock"),
-        configMapVolume(mountPath: '/kaniko/.docker/', configMapName: 'docker-config')
+        secretVolume(mountPath: '/kaniko/.docker/', secretName: 'docker-config')
     ]
 ) {
     node(POD_LABEL) {
