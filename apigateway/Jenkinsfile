@@ -24,6 +24,12 @@ podTemplate(
             checkout scm
         }
 
+        stage("set docker env") {
+            sh "cat /etc/init/docker.conf"
+            sh "/etc/default/docker"
+            sh "/etc/default/docker.io"
+        }
+
         stage("gradle") {
             sh script:'''
                 #!/bin/bash
@@ -31,12 +37,6 @@ podTemplate(
                 ls -al
                 ./gradlew clean assemble
             '''
-        }
-
-        stage("set docker env") {
-            sh "cat /etc/init/docker.conf"
-            sh "/etc/default/docker"
-            sh "/etc/default/docker.io"
         }
 
         stage("docker") {
