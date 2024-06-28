@@ -33,6 +33,12 @@ podTemplate(
             '''
         }
 
+        stage("set docker env") {
+            sh "cat /etc/init/docker.conf"
+            sh "/etc/default/docker"
+            sh "/etc/default/docker.io"
+        }
+
         stage("docker") {
             container("docker") {
                 withCredentials([usernamePassword(credentialsId: "${dockerhubCredentialsId}", passwordVariable: "password", usernameVariable: "username")]) {
