@@ -29,9 +29,7 @@ podTemplate(
                 #!/bin/bash
                 cd apigateway
                 ls -al
-                pwd
-                ./gradlew tasks
-                ./gradlew clean build
+                ./gradlew clean assemble
             '''
         }
 
