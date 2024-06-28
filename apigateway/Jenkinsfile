@@ -4,10 +4,12 @@ podTemplate(
     serviceAccount: "jenkins",
     containers: [
         containerTemplate(name: "docker", image: "docker", ttyEnabled: true, command: 'cat'),
+        containerTemplate(name: "kaniko", image: "gcr.io/kaniko-project/executor:debug", ttyEnabled: true, command: '/busybox/cat')
         containerTemplate(name: "kubectl", image: "lachlanevenson/k8s-kubectl:v1.25.4", ttyEnabled: true, command: 'cat')
     ],
     volumes: [
-        hostPathVolume(mountPath: "/var/run/docker.sock", hostPath: "/var/run/docker.sock") // DooD
+        hostPathVolume(mountPath: "/var/run/docker.sock", hostPath: "/var/run/docker.sock"),
+        configMapVolume(mountPath: '/kaniko/.docker/', configMapName: 'docker-config')
     ]
 ) {
     node(POD_LABEL) {
@@ -24,12 +26,6 @@ podTemplate(
             checkout scm
         }
 
-        stage("set docker env") {
-            sh "cat /etc/init/docker.conf"
-            sh "/etc/default/docker"
-            sh "/etc/default/docker.io"
-        }
-
         stage("gradle") {
             sh script:'''
                 #!/bin/bash
@@ -39,17 +35,25 @@ podTemplate(
             '''
         }
 
-        stage("docker") {
-            container("docker") {
-                withCredentials([usernamePassword(credentialsId: "${dockerhubCredentialsId}", passwordVariable: "password", usernameVariable: "username")]) {
-                    sh "docker login -u $username -p $password"
-                    sh "docker build -f DockerfileK8s -t ${dockerImage}:${dockerImageTag} ."
-                    sh "docker push ${dockerImage}:${dockerImageTag}"
-                }
+        stage("build image") {
+            container("kaniko") {
+                sh '''
+                    /kaniko/executor --context `pwd`
+                                     --dockerfile DockerfileK8s
+                                     --destination ${dockerImage}:${dockerImageTag}
+                '''
             }
+
+//             container("docker") {
+//                 withCredentials([usernamePassword(credentialsId: "${dockerhubCredentialsId}", passwordVariable: "password", usernameVariable: "username")]) {
+//                     sh "docker login -u $username -p $password"
+//                     sh "docker build -f DockerfileK8s -t ${dockerImage}:${dockerImageTag} ."
+//                     sh "docker push ${dockerImage}:${dockerImageTag}"
+//                 }
+//             }
         }
 
-        stage( "kubernetes" ) {
+        stage("kubernetes") {
             container("kubectl") {
                 sh "kubectl rollout restart deployment ${projectId}-deployment"
                 sh "kubectl annotate deployment.apps/${projectId}-deployment kubernetes.io/change-cause='Image updated at ${now} by ${env.BUILD_TAG}.'"
