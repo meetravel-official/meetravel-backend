@@ -25,12 +25,12 @@ podTemplate(
         }
 
         stage("gradle") {
-            sh "cd ${pipelineName}"
-            sh "cd apigateway"
-            sh "ls -alR"
-//             sh "./gradlew wrap --gradle-version=8.7 --daemon"
-            sh "./gradlew tasks"
-            sh "./gradlew clean build"
+            steps {
+                dir("${pipelineName}/apigateway") {
+                    sh "./gradlew tasks"
+                    sh "./gradlew clean build"
+                }
+            }
         }
 
         stage("docker") {
