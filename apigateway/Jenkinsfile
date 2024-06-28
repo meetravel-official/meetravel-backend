@@ -25,16 +25,14 @@ podTemplate(
         }
 
         stage("gradle") {
-            steps {
-                sh script:'''
-                    #!/bin/bash
-                    cd apigateway
-                    cd apigateway
-                    pwd
-                    ./gradlew tasks
-                    ./gradlew clean build
-                '''
-            }
+            sh script:'''
+                #!/bin/bash
+                cd apigateway
+                cd apigateway
+                pwd
+                ./gradlew tasks
+                ./gradlew clean build
+            '''
         }
 
         stage("docker") {
