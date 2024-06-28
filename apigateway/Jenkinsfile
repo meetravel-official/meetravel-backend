@@ -28,7 +28,7 @@ podTemplate(
             sh script:'''
                 #!/bin/bash
                 cd apigateway
-                cd apigateway
+                ls -al
                 pwd
                 ./gradlew tasks
                 ./gradlew clean build
