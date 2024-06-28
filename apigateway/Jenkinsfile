@@ -13,9 +13,9 @@ podTemplate(
     node(POD_LABEL) {
         def now = java.time.LocalDateTime.now()
         def projectId = "apigateway" // 프로젝트 아이디
+        def pipelineName = "apigateway"
 
         // docker
-        // TODO: 이거 나중에 AWS에 젠킨스 올리고 크레덴셜에 아래 이름으로 된 거로 meetravel.official 추가해줘야 함.
         def dockerhubCredentialsId = "username-password-dockerhub" // 젠킨스 도커허브 자격증명
         def dockerImage = "meetravel/meetravel-backend-${projectId}" // 도커허브 이미지
         def dockerImageTag = "latest" // 도커허브 이미지 태그
@@ -25,9 +25,7 @@ podTemplate(
         }
 
         stage("gradle") {
-            sh "pwd"
-            sh "ls .."
-            sh "cd apigateway"
+            sh "cd ${pipelineName}/apigateway"
             sh "ls -alR"
 //             sh "./gradlew wrap --gradle-version=8.7 --daemon"
             sh "./gradlew tasks"
