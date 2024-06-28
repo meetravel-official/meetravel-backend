@@ -26,8 +26,9 @@ podTemplate(
 
         stage("gradle") {
             sh "cd apigateway"
-            sh "./gradlew wrap --gradle-version=8.7 --daemon"
-            sh "./gradlew bootJar"
+            sh "pwd"
+//             sh "./gradlew wrap --gradle-version=8.7 --daemon"
+            sh "./gradlew clean build"
         }
 
         stage("docker") {
