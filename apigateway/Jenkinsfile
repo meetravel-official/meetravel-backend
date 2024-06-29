@@ -38,14 +38,13 @@ podTemplate(
 
         stage("build image") {
             container("kaniko") {
-                def dockerImage = "meetravel/meetravel-backend-${projectId}" // 도커허브 이미지
-                def dockerImageTag = "latest" // 도커허브 이미지 태그
+                def image = "${dockerImage}:${dockerImageTag}"
 
                 sh '''
                     /kaniko/executor --context git://github.com/meetravel-official/meetravel-backend.git \
                                      --context-sub-path apigateway \
                                      --dockerfile DockerfileK8s \
-                                     --destination ${dockerImage}:${dockerImageTag}
+                                     --destination ${image}
                 '''
             }
 
