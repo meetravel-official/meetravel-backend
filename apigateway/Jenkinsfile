@@ -38,12 +38,12 @@ podTemplate(
 
         stage("build image") {
             container("kaniko") {
-                sh "
-                    /kaniko/executor --context git://github.com/meetravel-official/meetravel-backend.git
-                                     --context-sub-path apigateway
-                                     --dockerfile DockerfileK8s
+                sh """
+                    /kaniko/executor --context git://github.com/meetravel-official/meetravel-backend.git \
+                                     --context-sub-path apigateway \
+                                     --dockerfile DockerfileK8s \
                                      --destination ${dockerImage}:${dockerImageTag}
-                "
+                """
             }
 
 //             container("docker") {
