@@ -16,6 +16,7 @@ podTemplate(
         def now = java.time.LocalDateTime.now()
         def projectId = "apigateway" // 프로젝트 아이디
         def pipelineName = "apigateway"
+        def repoUrl = "git://github.com/meetravel-official/meetravel-backend.git"
 
         // docker
         def dockerhubCredentialsId = "username-password-dockerhub" // 젠킨스 도커허브 자격증명
@@ -38,8 +39,9 @@ podTemplate(
         stage("build image") {
             container("kaniko") {
                 sh '''
-                    /kaniko/executor --context `pwd` \
-                                     --dockerfile `pwd`/DockerfileK8s \
+                    /kaniko/executor --context git://github.com/meetravel-official/meetravel-backend.git \
+                                     --context-sub-path apigateway \
+                                     --dockerfile DockerfileK8s \
                                      --destination ${dockerImage}:${dockerImageTag}
                 '''
             }
