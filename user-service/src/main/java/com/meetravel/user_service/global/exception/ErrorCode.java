@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
 
-    ALREADY_EXISTS_MEMBER_ID(4001, "이미 존재하는 회원아이디입니다."),
+    ALREADY_EXISTS_USER_ID(4001, "이미 존재하는 회원아이디입니다."),
     DATA_VALIDATION_ERROR(4002, "데이터가 유효하지 않습니다."),
     HTTP_MESSAGE_NOT_READABLE_EXCEPTION(4003, "HTTP 요청 본문 변환 중 에러가 발생했습니다."),
     METHOD_ARGUMENT_NOT_VALID_EXCEPTION(4004, "메서드 파라미터가 유효하지 않습니다."),
