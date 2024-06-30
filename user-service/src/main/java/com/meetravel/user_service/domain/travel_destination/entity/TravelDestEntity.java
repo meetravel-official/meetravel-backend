@@ -24,6 +24,7 @@ public class TravelDestEntity {
 
     @Id
     @Column(name = "TRAVEL_DEST_ID")
+    @Enumerated(EnumType.STRING)
     private TravelDest travelDestId;
 
     @Column(name = "TRAVEL_DEST_NAME")
