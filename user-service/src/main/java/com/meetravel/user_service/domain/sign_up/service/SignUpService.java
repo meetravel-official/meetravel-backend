@@ -1,6 +1,7 @@
 package com.meetravel.user_service.domain.sign_up.service;
 
 import com.meetravel.user_service.domain.sign_up.dto.request.SignUpRequest;
+import com.meetravel.user_service.domain.sign_up.dto.response.GetDestinationList;
 import com.meetravel.user_service.domain.travel_destination.entity.TravelDestEntity;
 import com.meetravel.user_service.domain.travel_destination.repository.TravelDestRepository;
 import com.meetravel.user_service.domain.user.entity.UserEntity;
@@ -14,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -53,7 +56,7 @@ public class SignUpService {
                 .role(Role.USER)
                 .build();
 
-        // 회원 관심사 추가
+        // 회원 선호여행지 추가
         this.addPrefTravelDestination(signUpRequest.getUserTravelDestinations(), userEntity);
 
         // 회원가입
@@ -85,4 +88,26 @@ public class SignUpService {
         }
 
     }
+
+    /**
+     * 회원가입 - 선호여행지 선택 시, 여행지 목록(후보군) 조회
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public GetDestinationList getDestinationList() {
+
+        // 여행지 목록 전체 조회
+        List<TravelDestEntity> travelDestList = travelDestRepository.findAll();
+
+        List<GetDestinationList.DestinationResponse> destinationResponse = travelDestList.stream()
+                .map(destination -> GetDestinationList.DestinationResponse.builder()
+                        .travelDestId(destination.getTravelDestId())
+                        .destName(destination.getTravelDestName())
+                        .build())
+                .collect(Collectors.toList());
+
+        return GetDestinationList.builder().destinationList(destinationResponse).build();
+    }
+
+
 }
