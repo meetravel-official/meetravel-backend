@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Table(name = "user_pref_travel_dest", uniqueConstraints = { // 데이터 중복 방지를 위해 유니크 제약조건 설정

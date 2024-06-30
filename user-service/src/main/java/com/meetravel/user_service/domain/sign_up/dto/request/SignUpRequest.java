@@ -1,4 +1,4 @@
-package com.meetravel.user_service.domain.auth.dto.request;
+package com.meetravel.user_service.domain.sign_up.dto.request;
 
 import com.meetravel.user_service.domain.user.enums.*;
 import jakarta.validation.constraints.NotBlank;
