@@ -42,6 +42,7 @@ dependencies {
 
     // logstash logback
     implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
+    implementation 'ch.qos.logback:logback-classic:1.4.12'
 
     // swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.5.0'
