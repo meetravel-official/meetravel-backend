@@ -1,5 +1,6 @@
 package com.meetravel.user_service.domain.user.entity;
 
+import com.meetravel.module_common.audit.BaseEntity;
 import com.meetravel.user_service.domain.travel_destination.entity.TravelDestEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserPrefTravelDestEntity {
+public class UserPrefTravelDestEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
