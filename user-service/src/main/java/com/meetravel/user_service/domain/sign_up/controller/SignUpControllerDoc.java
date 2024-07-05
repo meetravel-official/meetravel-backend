@@ -1,7 +1,7 @@
 package com.meetravel.user_service.domain.sign_up.controller;
 
 import com.meetravel.user_service.domain.sign_up.dto.request.SignUpRequest;
-import com.meetravel.user_service.domain.sign_up.dto.response.GetDestinationList;
+import com.meetravel.user_service.domain.sign_up.dto.response.GetSignUpInfoList;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -14,6 +14,6 @@ public interface SignUpControllerDoc {
     void signUp(@RequestBody @Valid SignUpRequest signUpRequest);
 
     @Operation(summary = "선호여행지 선택을 위한 여행지 목록 조회", description = "선호여행지 선택을 위한 여행지 목록을 조회합니다.")
-    ResponseEntity<GetDestinationList> getDestinationList();
+    ResponseEntity<GetSignUpInfoList> getSignUpInfoList();
 
 }

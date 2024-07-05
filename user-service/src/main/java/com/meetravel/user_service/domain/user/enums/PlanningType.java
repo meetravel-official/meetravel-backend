@@ -5,10 +5,10 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum PlanningStyle {
+public enum PlanningType {
 
     PLANNED("계획적으로"),
     IMPROMPTU("즉흥적으로");
 
-    private final String description;
+    private final String desc; // 설명
 }

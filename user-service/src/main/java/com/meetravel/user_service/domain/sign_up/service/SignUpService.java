@@ -1,29 +1,31 @@
 package com.meetravel.user_service.domain.sign_up.service;
 
+import com.meetravel.module_common.enums.TravelDest;
+import com.meetravel.module_common.exception.BadRequestException;
+import com.meetravel.module_common.exception.ErrorCode;
 import com.meetravel.user_service.domain.sign_up.dto.request.SignUpRequest;
-import com.meetravel.user_service.domain.sign_up.dto.response.GetDestinationList;
+import com.meetravel.user_service.domain.sign_up.dto.response.GetSignUpInfoList;
 import com.meetravel.user_service.domain.travel_destination.entity.TravelDestEntity;
 import com.meetravel.user_service.domain.travel_destination.repository.TravelDestRepository;
 import com.meetravel.user_service.domain.user.entity.UserEntity;
 import com.meetravel.user_service.domain.user.entity.UserPrefTravelDestEntity;
-import com.meetravel.user_service.domain.user.enums.Role;
-import com.meetravel.user_service.domain.user.enums.TravelDest;
+import com.meetravel.user_service.domain.user.enums.*;
+import com.meetravel.user_service.domain.user.repository.UserPrefTravelDestRepository;
 import com.meetravel.user_service.domain.user.repository.UserRepository;
-import com.meetravel.user_service.global.exception.BadRequestException;
-import com.meetravel.user_service.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class SignUpService {
 
     private final UserRepository userRepository;
+    private final UserPrefTravelDestRepository userPrefTravelDestRepository;
     private final TravelDestRepository travelDestRepository;
 
     /**
@@ -47,8 +49,8 @@ public class SignUpService {
                 .phoneNumber(signUpRequest.getPhoneNumber())
                 .profileImage(signUpRequest.getProfileImage())
                 .travelFrequency(signUpRequest.getTravelFrequency())
-                .timeManagement(signUpRequest.getTimeManagement())
-                .planningStyle(signUpRequest.getPlanningStyle())
+                .scheduleType(signUpRequest.getScheduleType())
+                .planningType(signUpRequest.getPlanningType())
                 .mbti(signUpRequest.getMbti())
                 .hobby(signUpRequest.getHobby())
                 .intro(signUpRequest.getIntro())
@@ -66,47 +68,110 @@ public class SignUpService {
 
     /**
      * 회원의 선호 여행지 추가
-     *
      * @param userTravelDestinations
      * @param userEntity
      */
     private void addPrefTravelDestination(Set<TravelDest> userTravelDestinations, UserEntity userEntity) {
 
         for (TravelDest travelDestination : userTravelDestinations) {
-            TravelDestEntity travelDestEntity = travelDestRepository.findByTravelDestId(travelDestination)
+            TravelDestEntity travelDest = travelDestRepository.findByTravelDestId(travelDestination)
                     .orElseThrow(() -> new BadRequestException(ErrorCode.DATA_VALIDATION_ERROR));
 
             // 중간 테이블 객체 생성
-            UserPrefTravelDestEntity userPrefTravelDestEntity = UserPrefTravelDestEntity.builder()
+            UserPrefTravelDestEntity userPrefTravelDest = UserPrefTravelDestEntity.builder()
                     .userEntity(userEntity)
-                    .travelDestEntity(travelDestEntity)
+                    .travelDestEntity(travelDest)
                     .build();
 
+            // 회원 선호 여행지 DB 저장
+            userPrefTravelDestRepository.save(userPrefTravelDest);
+
             // 각 객체로 불러올 수 있도록 리스트에 담아줌
-            userEntity.addUserPrefTravelDest(userPrefTravelDestEntity);
-            travelDestEntity.addUserPrefTravelDest(userPrefTravelDestEntity);
+            userEntity.addUserPrefTravelDest(userPrefTravelDest);
+            travelDest.addUserPrefTravelDest(userPrefTravelDest);
         }
 
     }
 
     /**
-     * 회원가입 - 선호여행지 선택 시, 여행지 목록(후보군) 조회
+     * 회원가입 시 필요한 목록 조회
      * @return
      */
     @Transactional(readOnly = true)
-    public GetDestinationList getDestinationList() {
+    public GetSignUpInfoList getSignUpInfoList() {
 
-        // 여행지 목록 전체 조회
+        // 여행 횟수 
+        List<GetSignUpInfoList.TravelFrequencyInfo> travelFrequencies= this.getTravelFrequencyInfo();
+        
+        // 여행 취향 
+        List<GetSignUpInfoList.ScheduleTypeInfo> scheduleTypes = this.getScheduleTypeInfo();
+        List<GetSignUpInfoList.PlanningTypeInfo> planningTypes = this.getPlanningTypeInfo();
+        
+        // 선호 여행지
+        List<GetSignUpInfoList.TravelDestInfo> travelDestInfoList = this.getTravelDestInfo();
+
+        return GetSignUpInfoList.builder()
+                .travelFrequencies(travelFrequencies)
+                .scheduleTypes(scheduleTypes)
+                .planningTypes(planningTypes)
+                .travelDestInfoList(travelDestInfoList)
+                .build();
+    }
+
+
+    /**
+     * 여행 횟수 목록 가져오기
+     * @return
+     */
+    private List<GetSignUpInfoList.TravelFrequencyInfo> getTravelFrequencyInfo() {
+        return Arrays.stream(TravelFrequency.values())
+                .map(frequency -> GetSignUpInfoList.TravelFrequencyInfo.builder()
+                        .travelFrequency(frequency)
+                        .desc(frequency.getDesc())
+                        .build())
+                .toList();
+    }
+
+    /**
+     * 여행 취향 1 목록 가져오기
+     * @return
+     */
+    private List<GetSignUpInfoList.ScheduleTypeInfo> getScheduleTypeInfo() {
+        return Arrays.stream(ScheduleType.values())
+                .map(type -> GetSignUpInfoList.ScheduleTypeInfo.builder()
+                        .scheduleType(type)
+                        .desc(type.getDesc())
+                        .build())
+                .toList();
+    }
+
+    /**
+     * 여행 취향 2 목록 가져오기
+     * @return
+     */
+    private List<GetSignUpInfoList.PlanningTypeInfo> getPlanningTypeInfo() {
+        return Arrays.stream(PlanningType.values())
+                .map(type -> GetSignUpInfoList.PlanningTypeInfo.builder()
+                        .planningType(type)
+                        .desc(type.getDesc())
+                        .build())
+                .toList();
+    }
+
+    /**
+     * 선호 여행지 목록 조회
+     * @return
+     */
+    @Transactional(readOnly = true)
+    private List<GetSignUpInfoList.TravelDestInfo> getTravelDestInfo() {
         List<TravelDestEntity> travelDestList = travelDestRepository.findAll();
 
-        List<GetDestinationList.DestinationResponse> destinationResponse = travelDestList.stream()
-                .map(destination -> GetDestinationList.DestinationResponse.builder()
-                        .travelDestId(destination.getTravelDestId())
-                        .destName(destination.getTravelDestName())
+        return travelDestList.stream()
+                .map(travelDest -> GetSignUpInfoList.TravelDestInfo.builder()
+                        .travelDestId(travelDest.getTravelDestId())
+                        .destName(travelDest.getTravelDestName())
                         .build())
-                .collect(Collectors.toList());
-
-        return GetDestinationList.builder().destinationList(destinationResponse).build();
+                .toList();
     }
 
 
