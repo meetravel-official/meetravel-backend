@@ -1,5 +1,6 @@
 package com.meetravel.user_service.domain.sign_up.dto.request;
 
+import com.meetravel.module_common.enums.TravelDest;
 import com.meetravel.user_service.domain.user.enums.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -16,8 +17,8 @@ public class SignUpRequest {
     private String phoneNumber;
     private String profileImage;
     private TravelFrequency travelFrequency;
-    private TimeManagement timeManagement;
-    private PlanningStyle planningStyle;
+    private ScheduleType scheduleType;
+    private PlanningType planningType;
     private String mbti;
     private String hobby;
     private String intro;
