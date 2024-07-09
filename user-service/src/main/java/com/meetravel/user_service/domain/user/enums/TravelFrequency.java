@@ -11,5 +11,5 @@ public enum TravelFrequency {
     FOUR_TO_SIX("4~6"),
     SEVEN_OR_MORE("7번 이상");
 
-    private final String description;
+    private final String desc;
 }

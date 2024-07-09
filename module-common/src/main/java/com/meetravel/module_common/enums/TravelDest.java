@@ -1,4 +1,4 @@
-package com.meetravel.user_service.domain.user.enums;
+package com.meetravel.module_common.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

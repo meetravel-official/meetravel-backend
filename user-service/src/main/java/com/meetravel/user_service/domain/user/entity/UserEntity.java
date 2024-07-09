@@ -1,5 +1,6 @@
 package com.meetravel.user_service.domain.user.entity;
 
+import com.meetravel.module_common.audit.BaseEntity;
 import com.meetravel.user_service.domain.user.enums.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ import java.util.*;
 @AllArgsConstructor
 @Builder
 @DynamicInsert // INSERT 구문 생성 시점에 null이 아닌 컬럼들만 포함하며,
-public class UserEntity implements UserDetails {
+public class UserEntity extends BaseEntity implements UserDetails {
 
     @Id
     @Column(name = "USER_ID")
@@ -47,12 +48,12 @@ public class UserEntity implements UserDetails {
     private TravelFrequency travelFrequency;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "TIME_MANAGEMENT")
-    private TimeManagement timeManagement;
+    @Column(name = "SCHEDULE_TYPE")
+    private ScheduleType scheduleType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "PLANNING_STYLE")
-    private PlanningStyle planningStyle;
+    @Column(name = "PLANNING_TYPE")
+    private PlanningType planningType;
 
     @Column(name = "MBTI")
     private String mbti;

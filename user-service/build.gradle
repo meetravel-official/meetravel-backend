@@ -27,6 +27,7 @@ ext {
 
 dependencies {
 
+    implementation files('../module-common/build/libs/module-common-0.0.1-plain.jar') // 공통 모듈, @ComponentScan(basePackages={"com.meetravel.module_common"}) 추가해야 적용된다
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'

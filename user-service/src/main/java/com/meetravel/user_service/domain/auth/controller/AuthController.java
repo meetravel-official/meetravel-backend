@@ -19,6 +19,7 @@ public class AuthController implements AuthControllerDoc {
 
     private final AuthService authService;
 
+    @Override
     @PostMapping("/kakao/login")
     public ResponseEntity<LoginResponse> kakaoLogin(@RequestParam String authorizationCode, HttpServletResponse response) {
         log.info("카카오 로그인");

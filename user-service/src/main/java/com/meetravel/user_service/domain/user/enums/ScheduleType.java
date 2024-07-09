@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum TimeManagement {
+public enum ScheduleType {
 
     TIGHT("빠듯하게"),
     RELAXED("여유롭게");
 
-    private final String description;
+    private final String desc; // 설명
 }
