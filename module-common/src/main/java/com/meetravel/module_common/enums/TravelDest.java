@@ -1,11 +1,13 @@
 package com.meetravel.module_common.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum TravelDest {
+public enum TravelDest implements BaseEnum{
     NATION_WIDE("전국"),
     SEOUL("서울"),
     GYEONGGI_SOUTH("경기 남부"),
@@ -26,5 +28,18 @@ public enum TravelDest {
     GYEONGBUK("경북"),
     GYEONGNAM("경남");
 
-    private final String destName;
+    @JsonValue
+    private final String value;
+
+    @JsonCreator
+    public static TravelDest fromValueToEnum(String value) {
+        for (TravelDest travelDest : TravelDest.values()) {
+            if (travelDest.getValue().equals(value)) {
+                return travelDest;
+            }
+        }
+        return null;
+    }
+
+
 }
