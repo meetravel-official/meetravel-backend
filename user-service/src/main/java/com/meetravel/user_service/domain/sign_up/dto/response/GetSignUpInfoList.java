@@ -23,28 +23,28 @@ public class GetSignUpInfoList {
     @Builder
     public static class TravelFrequencyInfo {
         private TravelFrequency travelFrequency;
-        private String desc;
+        private String value;
     }
 
     @Getter
     @Builder
     public static class ScheduleTypeInfo {
         private ScheduleType scheduleType;
-        private String desc;
+        private String value;
     }
 
     @Getter
     @Builder
     public static class PlanningTypeInfo {
         private PlanningType planningType;
-        private String desc;
+        private String value;
     }
 
     @Getter
     @Builder
     public static class TravelDestInfo {
-        private TravelDest travelDestId;
-        private String destName;
+        private Long travelDestId;
+        private TravelDest travelDest;
     }
 
 }
