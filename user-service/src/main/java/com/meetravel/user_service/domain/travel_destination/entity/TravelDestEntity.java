@@ -1,6 +1,7 @@
 package com.meetravel.user_service.domain.travel_destination.entity;
 
 import com.meetravel.module_common.audit.BaseEntity;
+import com.meetravel.module_common.converter.TravelDestConverter;
 import com.meetravel.module_common.enums.TravelDest;
 import com.meetravel.user_service.domain.user.entity.UserPrefTravelDestEntity;
 import jakarta.persistence.*;
@@ -22,11 +23,12 @@ public class TravelDestEntity extends BaseEntity {
 
     @Id
     @Column(name = "TRAVEL_DEST_ID")
-    @Enumerated(EnumType.STRING)
-    private TravelDest travelDestId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long travelDestId;
 
-    @Column(name = "TRAVEL_DEST_NAME")
-    private String travelDestName;
+    @Column(name = "TRAVEL_DEST")
+    @Convert(converter = TravelDestConverter.class)
+    private TravelDest travelDest;
 
     @OneToMany(mappedBy = "travelDestEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
