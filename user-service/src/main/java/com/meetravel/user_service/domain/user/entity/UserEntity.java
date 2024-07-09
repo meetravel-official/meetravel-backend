@@ -1,7 +1,10 @@
 package com.meetravel.user_service.domain.user.entity;
 
 import com.meetravel.module_common.audit.BaseEntity;
+import com.meetravel.module_common.converter.TravelDestConverter;
 import com.meetravel.user_service.domain.user.enums.*;
+import com.meetravel.user_service.global.converter.PlanningTypeConverter;
+import com.meetravel.user_service.global.converter.ScheduleTypeConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +23,6 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@DynamicInsert // INSERT 구문 생성 시점에 null이 아닌 컬럼들만 포함하며,
 public class UserEntity extends BaseEntity implements UserDetails {
 
     @Id
@@ -43,20 +45,21 @@ public class UserEntity extends BaseEntity implements UserDetails {
     @Column(name = "PROFILE_IMAGE")
     private String profileImage;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "TRAVEL_COUNT")
+    @Convert(converter = TravelDestConverter.class)
     private TravelFrequency travelFrequency;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "SCHEDULE_TYPE")
+    @Convert(converter = ScheduleTypeConverter.class)
     private ScheduleType scheduleType;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "PLANNING_TYPE")
+    @Convert(converter = PlanningTypeConverter.class)
     private PlanningType planningType;
 
     @Column(name = "MBTI")
-    private String mbti;
+    @Enumerated(EnumType.STRING)
+    private MBTI mbti;
 
     @Column(name = "HOBBY")
     private String hobby;
