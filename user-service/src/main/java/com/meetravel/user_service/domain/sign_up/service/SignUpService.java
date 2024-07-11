@@ -1,6 +1,5 @@
 package com.meetravel.user_service.domain.sign_up.service;
 
-import com.meetravel.module_common.enums.TravelDest;
 import com.meetravel.module_common.exception.BadRequestException;
 import com.meetravel.module_common.exception.ErrorCode;
 import com.meetravel.user_service.domain.sign_up.dto.request.SignUpRequest;
@@ -42,7 +41,7 @@ public class SignUpService {
         }
 
         // 유저 엔티티 생성
-        UserEntity userEntity = UserEntity.builder()
+        UserEntity user = UserEntity.builder()
                 .userId(signUpRequest.getUserId())
                 .name(signUpRequest.getName())
                 .nickName(signUpRequest.getNickName())
@@ -58,11 +57,15 @@ public class SignUpService {
                 .role(Role.USER)
                 .build();
 
-        // 회원 선호여행지 추가
-        this.addPrefTravelDestination(signUpRequest.getUserTravelDestinations(), userEntity);
-
         // 회원가입
-        userRepository.save(userEntity);
+        /** 그냥 save만 해버리고 user 변수로 받지않고 선호 여행지 추가 메소드에 넘기면 안된다.(Transient : JPA가 아예 인지를 하지 못하는 상태로 인식된다)
+        ** 객체는 메모리에 있지만 아직 데이터베이스에 저장되지 않았으며, Persistence Context에도 존재하지 않는 상태이다
+         *
+        */
+        user = userRepository.save(user);
+
+        // 회원 선호여행지 추가
+        this.addPrefTravelDestination(signUpRequest.getUserTravelDestinations(), user);
 
     }
 
@@ -71,10 +74,10 @@ public class SignUpService {
      * @param userTravelDestinations
      * @param userEntity
      */
-    private void addPrefTravelDestination(Set<TravelDest> userTravelDestinations, UserEntity userEntity) {
+    private void addPrefTravelDestination(Set<SignUpRequest.TravelDestInfo> userTravelDestinations, UserEntity userEntity) {
 
-        for (TravelDest travelDestination : userTravelDestinations) {
-            TravelDestEntity travelDest = travelDestRepository.findByTravelDestId(travelDestination)
+        for (SignUpRequest.TravelDestInfo travelDestInfo: userTravelDestinations) {
+            TravelDestEntity travelDest = travelDestRepository.findByTravelDestId(travelDestInfo.getTravelDestId())
                     .orElseThrow(() -> new BadRequestException(ErrorCode.DATA_VALIDATION_ERROR));
 
             // 중간 테이블 객체 생성
@@ -83,8 +86,8 @@ public class SignUpService {
                     .travelDestEntity(travelDest)
                     .build();
 
-            // 회원 선호 여행지 DB 저장
-            userPrefTravelDestRepository.save(userPrefTravelDest);
+            // 굳이 해주지 않아도 @CASCADE.ALL 옵션으로 연관관계 매핑 시 같이 저장됨
+            //userPrefTravelDestRepository.save(userPrefTravelDest);
 
             // 각 객체로 불러올 수 있도록 리스트에 담아줌
             userEntity.addUserPrefTravelDest(userPrefTravelDest);
@@ -127,7 +130,7 @@ public class SignUpService {
         return Arrays.stream(TravelFrequency.values())
                 .map(frequency -> GetSignUpInfoList.TravelFrequencyInfo.builder()
                         .travelFrequency(frequency)
-                        .desc(frequency.getDesc())
+                        .value(frequency.getValue())
                         .build())
                 .toList();
     }
@@ -140,7 +143,7 @@ public class SignUpService {
         return Arrays.stream(ScheduleType.values())
                 .map(type -> GetSignUpInfoList.ScheduleTypeInfo.builder()
                         .scheduleType(type)
-                        .desc(type.getDesc())
+                        .value(type.getValue())
                         .build())
                 .toList();
     }
@@ -153,13 +156,13 @@ public class SignUpService {
         return Arrays.stream(PlanningType.values())
                 .map(type -> GetSignUpInfoList.PlanningTypeInfo.builder()
                         .planningType(type)
-                        .desc(type.getDesc())
+                        .value(type.getValue())
                         .build())
                 .toList();
     }
 
     /**
-     * 선호 여행지 목록 조회
+     * 회원 가입 시, 선호 여행지 목록 조회
      * @return
      */
     @Transactional(readOnly = true)
@@ -169,7 +172,7 @@ public class SignUpService {
         return travelDestList.stream()
                 .map(travelDest -> GetSignUpInfoList.TravelDestInfo.builder()
                         .travelDestId(travelDest.getTravelDestId())
-                        .destName(travelDest.getTravelDestName())
+                        .travelDest(travelDest.getTravelDest())
                         .build())
                 .toList();
     }

@@ -5,9 +5,10 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum Role {
-    USER("ROLE_USER"), ADMIN("ROLE_ADMIN");
-
-    private final String value;
+public enum MBTI {
+    ISTJ, ISFJ, INFJ, INTJ,
+    ISTP, ISFP, INFP, INTP,
+    ESTP, ESFP, ENFP, ENTP,
+    ESTJ, ESFJ, ENFJ, ENTJ;
 
 }

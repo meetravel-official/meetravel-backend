@@ -42,13 +42,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         /** AT가 null 이 아닌 경우 */
         if (accessToken != null && jwtService.validateToken(accessToken, request)) { // 1. 토큰이 헤더에 실려왔는지, 토큰이 유효한 토큰인지 확인
-            if (jwtService.getIsTemporary(accessToken)) {
-                if (!isTemporaryTokenAllowedUrl(request.getRequestURI())) { // 나머지 URL은 임시 토큰으로 접근 불가, 임시 토큰인 경우 회원가입 요청만 허용
+            boolean isTemporary = jwtService.getIsTemporary(accessToken);
+
+            if (isTemporary) {
+                if (isNotTemporaryTokenAllowedUrl(request.getRequestURI())) { // 나머지 URL은 임시 토큰으로 접근 불가, 임시 토큰인 경우 회원가입 요청만 허용
                     return; // CustomAuthenticationEntryPoint가 처리하도록 함
                 }
             }
             // accessToken이 유효하면 Context에 Authentication 저장 (임시/정식 모두)
-            this.setAuthentication(accessToken);
+            this.setAuthentication(accessToken, isTemporary);
 
         } else {
             /** AT가 헤더에 없거나, 만료되었거나, 유효하지 않은 경우
@@ -65,12 +67,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 jwtService.setHeaderRefreshToken(response, loginResponse.getRefreshToken()); // RT 발급
 
                 if (isTemporary) { // 임시 토큰인 경우
-                    if (!isTemporaryTokenAllowedUrl(request.getRequestURI())) { // 나머지 URL은 임시 토큰으로 접근 불가, 임시 토큰인 경우 회원가입 요청만 허용
+                    if (isNotTemporaryTokenAllowedUrl(request.getRequestURI())) { // 나머지 URL은 임시 토큰으로 접근 불가, 임시 토큰인 경우 회원가입 요청만 허용
                         return; // CustomAuthenticationEntryPoint가 처리하도록 함
                     }
                 }
                 // accessToken이 유효하면 Context에 Authentication 저장 (임시/정식 모두)
-                this.setAuthentication(loginResponse.getAccessToken());
+                this.setAuthentication(loginResponse.getAccessToken(), isTemporary);
             }
         }
         filterChain.doFilter(request, response);
@@ -81,8 +83,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      *
      * @param accessToken
      */
-    public void setAuthentication(String accessToken) {
-        Authentication authentication = jwtService.getAuthentication(accessToken);
+    public void setAuthentication(String accessToken, boolean isTemporary) {
+        Authentication authentication = jwtService.getAuthentication(accessToken,isTemporary);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
@@ -92,8 +94,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * @param requestUri
      * @return
      */
-    private boolean isTemporaryTokenAllowedUrl(String requestUri) {
+    private boolean isNotTemporaryTokenAllowedUrl(String requestUri) {
         return Arrays.stream(TEMPORARY_TOKEN_ALLOWED_URLS)
-                .anyMatch(requestUri::equals);
+                .noneMatch(requestUri::startsWith);
     }
 }

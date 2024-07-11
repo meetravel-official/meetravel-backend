@@ -19,10 +19,17 @@ public class SignUpRequest {
     private TravelFrequency travelFrequency;
     private ScheduleType scheduleType;
     private PlanningType planningType;
-    private String mbti;
+    private MBTI mbti;
     private String hobby;
     private String intro;
     private SocialType socialType;
-    private Set<TravelDest> userTravelDestinations;
+    private Set<TravelDestInfo> userTravelDestinations;
+
+    @Getter
+    public static class TravelDestInfo {
+        private Long travelDestId;
+        private TravelDest travelDest;
+
+    }
 
 }
