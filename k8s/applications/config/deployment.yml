@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: config-deployment
+  annotations:
+    kubernetes.io/change-cause: "Initialized by manifest files."
+  labels:
+    env: production
+    tier: backend
+    app: config
+    name: config-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      env: production
+      tier: backend
+      app: config
+      name: config-pod
+  template:
+    metadata:
+      labels:
+        env: production
+        tier: backend
+        app: config
+        name: config-pod
+    spec:
+      nodeSelector:
+        config: config
+      containers:
+        - name: config
+          image: meetravel/meetravel-backend-config:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8888
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
+            - name: SEARCH_LOCATION
+              value: "classpath:/config"
+            - name: RABBITMQ_HOSTNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: RABBITMQ_HOSTNAME
+            - name: logstash_hostname
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: LOGSTASH_HOSTNAME
+          envFrom:
+            - secretRef:
+                name: config-secret
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8888
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 36
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8888
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3

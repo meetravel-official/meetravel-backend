@@ -1,0 +1,34 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - apigateway/ingress.yml
+  - apigateway/autoscaler.yml
+  - apigateway/deployment.yml
+  - apigateway/service.yml
+  - discovery/ingress.yml
+  - discovery/deployment.yml
+  - discovery/service.yml
+  - config/deployment.yml
+  - config/service.yml
+
+images:
+  - name: meetravel/meetravel-backend-apigateway:latest
+    newTag: latest
+  - name: meetravel/meetravel-backend-config:latest
+    newTag: latest
+  - name: meetravel/meetravel-backend-discovery:latest
+    newTag: latest
+
+#patches:
+#  - target:
+#      name: apigateway-ingress
+#    patch: |-
+#      - op: replace
+#        path: /spec/rules/0/host
+#        value: "<TODO: 백엔드 API 게이트웨이 도메인>"
+#  - target:
+#      name: discovery-ingress
+#    patch: |-
+#      - op: replace
+#        path: /spec/rules/0/host
+#        value: "<TODO: 백엔드 유레카 서버 도메인>"

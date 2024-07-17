@@ -1,0 +1,59 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: jenkins
+  namespace: jenkins
+  annotations:
+    rbac.authorization.kubernetes.io/autoupdate: "true"
+  labels:
+    kubernetes.io/bootstrapping: rbac-defaults
+rules:
+  - apiGroups: [ "" ]
+    resources: [ "pods" ]
+    verbs: [ "create","delete","get","list","patch","update","watch" ]
+  - apiGroups: [ "" ]
+    resources: [ "pods/exec" ]
+    verbs: [ "create","delete","get","list","patch","update","watch" ]
+  - apiGroups: [ "" ]
+    resources: [ "pods/log" ]
+    verbs: [ "get","list","watch" ]
+  - apiGroups: [ "" ]
+    resources: [ "secrets" ]
+    verbs: [ "get" ]
+  - apiGroups: [ "" ]
+    resources: [ "services" ]
+    verbs: [ "create","delete","get","update" ]
+  - apiGroups: [ "apps" ]
+    resources: [ "deployments" ]
+    verbs: [ "create","delete","get","update" ]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jenkins
+  namespace: jenkins
+  labels:
+    env: production
+    tier: cicd
+    app: jenkins
+    name: jenkins-sa
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: jenkins
+  namespace: jenkins
+  labels:
+    env: production
+    tier: cicd
+    app: jenkins
+    name: jenkins-rb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: jenkins
+subjects:
+  - kind: ServiceAccount
+    name: jenkins
+    namespace: jenkins
