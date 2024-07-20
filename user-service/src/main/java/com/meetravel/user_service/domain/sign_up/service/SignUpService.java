@@ -2,13 +2,17 @@ package com.meetravel.user_service.domain.sign_up.service;
 
 import com.meetravel.module_common.exception.BadRequestException;
 import com.meetravel.module_common.exception.ErrorCode;
+import com.meetravel.module_common.exception.NotFoundException;
 import com.meetravel.user_service.domain.sign_up.dto.request.SignUpRequest;
 import com.meetravel.user_service.domain.sign_up.dto.response.GetSignUpInfoList;
 import com.meetravel.user_service.domain.travel_destination.entity.TravelDestEntity;
 import com.meetravel.user_service.domain.travel_destination.repository.TravelDestRepository;
+import com.meetravel.user_service.domain.user.entity.RoleEntity;
 import com.meetravel.user_service.domain.user.entity.UserEntity;
 import com.meetravel.user_service.domain.user.entity.UserPrefTravelDestEntity;
+import com.meetravel.user_service.domain.user.entity.UserRoleEntity;
 import com.meetravel.user_service.domain.user.enums.*;
+import com.meetravel.user_service.domain.user.repository.RoleRepository;
 import com.meetravel.user_service.domain.user.repository.UserPrefTravelDestRepository;
 import com.meetravel.user_service.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +29,7 @@ public class SignUpService {
 
     private final UserRepository userRepository;
     private final UserPrefTravelDestRepository userPrefTravelDestRepository;
+    private final RoleRepository roleRepository;
     private final TravelDestRepository travelDestRepository;
 
     /**
@@ -40,6 +45,7 @@ public class SignUpService {
             throw new BadRequestException(ErrorCode.ALREADY_EXISTS_USER_ID);
         }
 
+
         // 유저 엔티티 생성
         UserEntity user = UserEntity.builder()
                 .userId(signUpRequest.getUserId())
@@ -54,8 +60,8 @@ public class SignUpService {
                 .hobby(signUpRequest.getHobby())
                 .intro(signUpRequest.getIntro())
                 .socialType(signUpRequest.getSocialType())
-                .role(Role.USER)
                 .build();
+
 
         // 회원가입
         /** 그냥 save만 해버리고 user 변수로 받지않고 선호 여행지 추가 메소드에 넘기면 안된다.(Transient : JPA가 아예 인지를 하지 못하는 상태로 인식된다)
@@ -64,17 +70,39 @@ public class SignUpService {
         */
         user = userRepository.save(user);
 
+
+        // 회원 권한 부여
+        this.addUserRole(user);
         // 회원 선호여행지 추가
         this.addPrefTravelDestination(signUpRequest.getUserTravelDestinations(), user);
 
     }
 
     /**
+     * 회원 권한 부여 (일반 사용자)ㄴ
+     * @param user
+     */
+    private void addUserRole(UserEntity user) {
+
+        // 일반 사용자 권한 부여
+        RoleEntity role = roleRepository.findByRole(Role.USER)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.DATA_NOT_FOUND));
+
+
+        UserRoleEntity userRole = UserRoleEntity.builder()
+                .user(user)
+                .role(role)
+                .build();
+
+        user.addUserRole(userRole);
+    }
+
+    /**
      * 회원의 선호 여행지 추가
      * @param userTravelDestinations
-     * @param userEntity
+     * @param user
      */
-    private void addPrefTravelDestination(Set<SignUpRequest.TravelDestInfo> userTravelDestinations, UserEntity userEntity) {
+    private void addPrefTravelDestination(Set<SignUpRequest.TravelDestInfo> userTravelDestinations, UserEntity user) {
 
         for (SignUpRequest.TravelDestInfo travelDestInfo: userTravelDestinations) {
             TravelDestEntity travelDest = travelDestRepository.findByTravelDestId(travelDestInfo.getTravelDestId())
@@ -82,15 +110,15 @@ public class SignUpService {
 
             // 중간 테이블 객체 생성
             UserPrefTravelDestEntity userPrefTravelDest = UserPrefTravelDestEntity.builder()
-                    .userEntity(userEntity)
-                    .travelDestEntity(travelDest)
+                    .user(user)
+                    .travelDest(travelDest)
                     .build();
 
             // 굳이 해주지 않아도 @CASCADE.ALL 옵션으로 연관관계 매핑 시 같이 저장됨
             //userPrefTravelDestRepository.save(userPrefTravelDest);
 
             // 각 객체로 불러올 수 있도록 리스트에 담아줌
-            userEntity.addUserPrefTravelDest(userPrefTravelDest);
+            user.addUserPrefTravelDest(userPrefTravelDest);
             travelDest.addUserPrefTravelDest(userPrefTravelDest);
         }
 
