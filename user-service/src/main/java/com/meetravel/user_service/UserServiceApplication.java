@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @EnableDiscoveryClient
 @EnableFeignClients
-@ComponentScan(basePackages={"com.meetravel.module_common"})
+@ComponentScan(basePackages={"com.meetravel.module_common","com.meetravel.user_service"})
 @SpringBootApplication
 public class UserServiceApplication {
 
