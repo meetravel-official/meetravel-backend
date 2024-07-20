@@ -10,10 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
 
@@ -23,7 +19,7 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserEntity extends BaseEntity implements UserDetails {
+public class UserEntity extends BaseEntity {
 
     @Id
     @Column(name = "USER_ID")
@@ -71,55 +67,21 @@ public class UserEntity extends BaseEntity implements UserDetails {
     @Column(name = "SOCIAL_TYPE")
     private SocialType socialType; // KAKAO
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "ROLE")
-    private Role role;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserRoleEntity> userRoles;
 
-    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private Set<UserPrefTravelDestEntity> userPrefTravelDestEntities = new HashSet<>();
+    private Set<UserPrefTravelDestEntity> userPrefTravelDests = new HashSet<>();
 
 
     // 회원의 선호여행지 추가(등록)
     public void addUserPrefTravelDest(UserPrefTravelDestEntity userPrefTravelDestEntity) {
-        userPrefTravelDestEntities.add(userPrefTravelDestEntity);
+        this.userPrefTravelDests.add(userPrefTravelDestEntity);
     }
 
-
-    /**
-     * UserDetails implements 메소드
-     *
-     * @return
-     */
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(role.name()));
-        return authorities;
+    public void addUserRole(UserRoleEntity userRole) {
+        this.userRoles.add(userRole);
     }
 
-    @Override
-    public String getUsername() {
-        return null;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return false;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return false;
-    }
 }
