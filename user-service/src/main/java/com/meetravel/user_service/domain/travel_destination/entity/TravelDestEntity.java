@@ -30,12 +30,12 @@ public class TravelDestEntity extends BaseEntity {
     @Convert(converter = TravelDestConverter.class)
     private TravelDest travelDest;
 
-    @OneToMany(mappedBy = "travelDestEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "travelDest", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private Set<UserPrefTravelDestEntity> userPrefTravelDestEntities = new HashSet<>();
+    private Set<UserPrefTravelDestEntity> userPrefTravelDests = new HashSet<>();
 
-    public void addUserPrefTravelDest(UserPrefTravelDestEntity userPrefTravelDestEntity) {
-        userPrefTravelDestEntities.add(userPrefTravelDestEntity);
+    public void addUserPrefTravelDest(UserPrefTravelDestEntity userPrefTravelDest) {
+        this.userPrefTravelDests.add(userPrefTravelDest);
     }
 
 }

@@ -24,10 +24,10 @@ public class UserPrefTravelDestEntity extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "USER_ID", nullable = false)
-    private UserEntity userEntity;
+    private UserEntity user;
 
     @ManyToOne
     @JoinColumn(name = "TRAVEL_DEST_ID", nullable = false)
-    private TravelDestEntity travelDestEntity;
+    private TravelDestEntity travelDest;
 
 }
