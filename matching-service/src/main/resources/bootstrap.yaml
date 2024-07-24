@@ -1,0 +1,22 @@
+---
+spring.config.activate.on-profile: local
+
+spring:
+  cloud:
+    config:
+      uri: http://localhost:8888
+      name: application   # /application/local
+---
+spring.config.activate.on-profile: prod
+
+spring:
+  cloud:
+    kubernetes:
+      config:
+        sources:
+          - namespace: meetravel-backend
+            name: meetravel-configmap
+      secrets:
+        enableApi: true
+        sources:
+          - name: db-secret

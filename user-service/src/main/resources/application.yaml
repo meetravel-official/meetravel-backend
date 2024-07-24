@@ -1,23 +1,9 @@
 server:
-  port: 8001 # random port
+  port: 9001 # user-service port!
 
 spring:
   application:
     name: user-service
-
-  jpa:
-    generate-ddl: true
-    hibernate:
-      ddl-auto: create
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-    show-sql: true
-    format-sql: true
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${MEETRAVEL_DB_LOCAL_URL}
-    username: ${MEETRAVEL_DB_USERNAME}
-    password: ${MEETRAVEL_DB_PASSWORD}
 
 jwt:
   secretKey: ${MEETRAVEL_JWT_SECRET_KEY}
@@ -40,7 +26,6 @@ springdoc:
     operations-sorter: alpha
     display-request-duration: true
 
-
 oauth:
   kakao:
     auth-url: https://kauth.kakao.com
@@ -49,3 +34,36 @@ oauth:
     client_secret: ${KAKAO_CLIENT_SECRET} # Client Secret 키
     redirect_uri: ${KAKAO_REDIRECTED_URI}
     content_type: application/x-www-form-urlencoded
+---
+spring.config.activate.on-profile: local
+
+spring:
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    format-sql: true
+    database: mysql
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MEETRAVEL_DB_LOCAL_URL}
+    username: ${MEETRAVEL_DB_USERNAME}
+    password: ${MEETRAVEL_DB_PASSWORD}
+
+# this actuator setting makes the service register
+management:
+  endpoint:
+    configprops:
+      show-values: always
+    env:
+      show-values: always
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, info, configprops, env
