@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Entity
@@ -34,6 +35,9 @@ public class UserEntity extends BaseEntity {
 
     @Column(name = "NICKNAME")
     private String nickName;
+
+    @Column(name = "BIRTH_DATE")
+    private LocalDate birthDate;
 
     @Column(name = "PHONE_NUMBER")
     private String phoneNumber;

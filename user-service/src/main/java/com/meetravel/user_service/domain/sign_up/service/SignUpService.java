@@ -51,6 +51,7 @@ public class SignUpService {
                 .userId(signUpRequest.getUserId())
                 .name(signUpRequest.getName())
                 .nickName(signUpRequest.getNickName())
+                .birthDate(signUpRequest.getBirthDate())
                 .phoneNumber(signUpRequest.getPhoneNumber())
                 .profileImage(signUpRequest.getProfileImage())
                 .travelFrequency(signUpRequest.getTravelFrequency())
@@ -79,7 +80,7 @@ public class SignUpService {
     }
 
     /**
-     * 회원 권한 부여 (일반 사용자)ㄴ
+     * 회원 권한 부여 (일반 사용자)
      * @param user
      */
     private void addUserRole(UserEntity user) {

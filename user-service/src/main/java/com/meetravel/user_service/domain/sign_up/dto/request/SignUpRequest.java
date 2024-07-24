@@ -5,6 +5,7 @@ import com.meetravel.user_service.domain.user.enums.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Getter
@@ -14,6 +15,7 @@ public class SignUpRequest {
     private String userId;
     private String name;
     private String nickName;
+    private LocalDate birthDate;
     private String phoneNumber;
     private String profileImage;
     private TravelFrequency travelFrequency;
