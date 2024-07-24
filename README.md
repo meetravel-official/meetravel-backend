@@ -34,49 +34,28 @@
    - 만약 이미 내용이 커밋되어 있다면 unstage 한 뒤 다시 진행한다.
 4. PR을 하고 리뷰를 진행한다.
 
+---
+
 # 서비스 코드마다 적용할 것
 
-## 적용해야 하는 것 (Required)
+## `적용해야 하는 것 (Required)`
 
-> 1. **Service Discovery** - Eureka Server
+### 1. **Service Discovery** - Eureka Server
 
 [Discovery - README.md](https://github.com/meetravel-official/meetravel-backend/blob/main/discovery/README.md#서비스-등록을-위한-설정)
 
-> 2. **Distributed Tracing** - Spring Cloud Sleuth + Zipkin
-
-### 직접 추가해줘야 할 설정
-
-`build.gradle`
-```groovy
-dependencies {
-    implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
-    implementation 'org.springframework.cloud:spring-cloud-sleuth-zipkin'
-    implementation 'org.springframework.cloud:spring-cloud-starter-zipkin' // zipkin 3.0 부터 sleuth-zipkin 으로 변경
-}
-```
-
-### 관련 설정
-
-`meetravel-official/config/application.yml`
-```yaml
-# Zipkin 서버 정보
-spring:
-  zipkin:
-    base-url: http://localhost:8085
-```
-
-> 3. **Api Gateway Routes 추가** - in apigateway
+### 2. **Api Gateway Routes 추가** - in apigateway
 
 `*-service`를 추가하고 나서는 `apigateway/src/main/resources/application.yml`에 이미 작성되어 있는 예시들을 참고해 추가해야한다.
 
-## 필요할 때 적용하면 좋은 것 (Preferred)
+## `필요할 때 적용하면 좋은 것 (Preferred)`
 
-> 1. **Circuit Breaking** - Resilience4j
+### 1. **Circuit Breaking** - Resilience4j
 
 각 서비스가 유기적으로 연결되어 있는 MSA 특성상 한 서비스에서 일어난 에러 때문에 전체 시스템이 먹통이 될 수 있다.
 이를 방지하기 위해 에러를 전파해주는 디자인 패턴이 필요한데 이것이 바로 **Circuit Breaking 패턴**이다.
 
-### 직접 추가해줘야 할 설정
+#### 직접 추가해줘야 할 설정
 
 `build.gradle`
 ```groovy
