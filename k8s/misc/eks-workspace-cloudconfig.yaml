@@ -1,0 +1,61 @@
+# 현재 안 씀!! 사용하면 AWS CloudFormation에 템플릿 날아가고 자동 생성 도와줌.
+# reference: https://eksctl.io/usage/creating-and-managing-clusters/
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: eks-workspace
+  region: us-east-1
+
+# AZ
+availabilityZones: ["us-east-1a", "us-east-1b"]
+
+addons:
+  - name: vpc-cni # no version is specified so it deploys the default version
+    version: latest
+  - name: coredns
+    version: latest
+  - name: kube-proxy
+    version: latest
+  - name: aws-load-balancer-controller
+    version: latest
+    wellKnownPolicies:
+      awsLoadBalancerController: true
+  - name: aws-ebs-csi-driver
+    version: latest
+    attachPolicyARNs:
+      - arn:aws:iam::654682489778:role/AmazonEKS_EBS_CSI_DriverRole
+    resolveConflicts: overwrite
+    configurationValues: |-
+      controller:
+        
+
+# IAM OIDC & Service Account
+iam:
+  withOIDC: true
+
+# Managed Node Groups
+managedNodeGroups:
+  # On-Demand Instance
+  - name: production
+    instanceType: t2.medium
+    minSize: 1
+    desiredCapacity: 2
+    labels: { role: production }
+    maxSize: 3
+    privateNetworking: true
+    ssh:
+      allow: true
+      publicKeyPath: ./keypair/myssh.pub
+    availabilityZones: ["ap-northeast-2a", "ap-northeast-2b", "ap-northeast-2c"]
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+        albIngress: true
+        cloudWatch: true
+        ebs: true
+
+# CloudWatch Logging
+#cloudWatch:
+#  clusterLogging:
+#    enableTypes: ["*"]

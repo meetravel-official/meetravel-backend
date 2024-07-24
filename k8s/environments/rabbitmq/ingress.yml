@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rabbitmq-ingress
+  annotations:
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/subnets: subnet-00cbff553eb8318ef, subnet-034bd15305a16c645
+  labels:
+    env: production
+    tier: backend
+    app: rabbitmq
+    name: rabbitmq-ingress
+spec:
+  ingressClassName: alb
+  rules:
+#    - host: <RabbitMQ 도메인> # TODO
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: rabbitmq
+                port:
+                  number: 15672
