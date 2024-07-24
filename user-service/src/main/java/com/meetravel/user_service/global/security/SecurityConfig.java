@@ -30,7 +30,9 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     private static final String[] PERMIT_URLS = {
-            "/auth/kakao/login","/swagger-ui/**","/v3/api-docs/**"
+            "/auth/kakao/login",
+            "/swagger-ui/**","/v3/api-docs/**",
+            "/actuator/?*"
     };
 
     private static final String[] GetMethodPermitURL = {
@@ -69,7 +71,8 @@ public class SecurityConfig {
             CorsConfiguration config = new CorsConfiguration();
             config.setAllowedHeaders(Collections.singletonList("*"));
             config.setAllowedMethods(Collections.singletonList("*"));
-            config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:8080")); // ️ 허용할 origin
+            // 아래 포트 9001인데 application.yaml에서 바뀌면 수정해야함!
+            config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:9001")); // ️ 허용할 origin
             config.setAllowCredentials(true);
             return config;
         };
