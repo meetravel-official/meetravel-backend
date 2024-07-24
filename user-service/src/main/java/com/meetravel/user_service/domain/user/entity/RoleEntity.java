@@ -5,6 +5,7 @@ import com.meetravel.user_service.domain.user.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -28,6 +29,6 @@ public class RoleEntity extends BaseEntity {
     private String desc;
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<UserRoleEntity> userRoles;
+    private Set<UserRoleEntity> userRoles = new HashSet<>();
 
 }
