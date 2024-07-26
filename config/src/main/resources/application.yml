@@ -18,7 +18,7 @@ management:
         include: busrefresh
 
 ---
-spring.config.activate.on-profile: native, default  # local 프로필은 동작 안 함
+spring.config.activate.on-profile: native
 
 spring:
   cloud:
