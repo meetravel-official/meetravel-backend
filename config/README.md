@@ -6,11 +6,46 @@
 
 ## 실행 방식 (현재 계속 업데이트 되는 중)
 
-1. application.yml 로컬(native 프로필)에 있는 외부 config 폴더 위치(이 폴더 말고)를 자신의 환경에 맞게 지정해준다.
-2. https://docs.spring.io/spring-cloud-config/docs/current/reference/html/#_authentication 여길 참고해서 rsa 키 만들고 깃허브에 공개키 등록하기
-3. 개인키는 sandbox, prod 프로필의 private-key 속성에 자신의 개인키를 '규격에 맞게' 똑같은 형식으로 덮어씌워준다.
-4. 이 폴더의 최상위에 있는 `rabbitmq_docker_run.sh`를 실행시켜준다.
-5. 실행시 프로필을 잘 설정해주고 실행해서 동작을 살펴본다.
+0. **`local`에서만 사용함 + 프로필은 `native`로 해줘야 동작함 !!!!!!!!!!!!!!!!!!!!!!**
+1. application-local.yml 로컬에 있는 외부 config 폴더 위치(이 폴더 말고)를 자신의 환경에 맞게 지정해준다.
+2. `bootstrap.yaml`에 다음을 추가해준다.
+   ```yaml
+   ---
+   spring.config.activate.on-profile: local
+   
+   spring:
+     cloud:
+       config:
+         uri: http://localhost:8888
+         name: application   # /application/local
+       # 로컬 환경에서는 Spring Cloud Kubernetes를 사용하지 않는다
+       kubernetes:
+         config:
+           enabled: false
+         discovery:
+           enabled: false
+         loadbalancer:
+            enabled: false
+   ---
+   spring.config.activate.on-profile: prod
+    
+   # 개발 환경에서는 eureka client를 비활성화한다
+   eureka:
+    client:
+      enabled: false
+   
+   spring:
+    cloud:
+      kubernetes:
+        config:
+          sources:
+            - namespace: meetravel-backend
+              name: meetravel-configmap
+        secrets:
+          enableApi: true
+          sources:
+            - name: db-secret
+   ```
 
 ## 동작 방식
 
@@ -47,9 +82,15 @@
 
 ## 설정 정보 업데이트 시 ❗️❗️
 
+### local
+
 actuator refresh를 client마다 호출하게 해서 갱신시킬 수 있지만 모든 인스턴스를 호출할 수는 없는 일이다.
 
-따라서 변경을 감지하면 해당 사항을 자동으로 전파하는 기능을 사용하도록 할 것이다. ex) `rabbitmq` or `kafka` with docker(or k8s)
+따라서 변경을 감지하면 해당 사항을 자동으로 전파하는 기능을 사용하도록 할 것이다. ex) `rabbitmq` or `kafka` with docker
+
+### kubernetes
+
+`spring cloud kubernetes config server`, `config watcher`가 있어서 자동으로 변경사항을 반영해준다.
 
 ---
 **References**

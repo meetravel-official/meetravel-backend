@@ -1,0 +1,35 @@
+---
+spring.config.activate.on-profile: local
+
+spring:
+  cloud:
+    config:
+      uri: http://localhost:8888
+      name: application   # /application/local
+    # 로컬 환경에서는 Spring Cloud Kubernetes를 사용하지 않는다
+    kubernetes:
+      config:
+        enabled: false
+      discovery:
+        enabled: false
+      loadbalancer:
+        enabled: false
+---
+spring.config.activate.on-profile: prod
+
+# 개발 환경에서는 eureka client를 비활성화한다
+eureka:
+  client:
+    enabled: false
+
+spring:
+  cloud:
+    kubernetes:
+      config:
+        sources:
+          - namespace: meetravel-backend
+            name: meetravel-configmap
+      secrets:
+        enableApi: true
+        sources:
+          - name: db-secret

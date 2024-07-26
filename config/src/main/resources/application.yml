@@ -18,7 +18,7 @@ management:
         include: busrefresh
 
 ---
-spring.config.activate.on-profile: native, default
+spring.config.activate.on-profile: native
 
 spring:
   cloud:
@@ -30,7 +30,7 @@ spring:
   # 로컬에서 작업할 땐 각자의 환경에 맞춰줘야 합니다!
 
 ---
-spring.config.activate.on-profile: sandbox
+spring.config.activate.on-profile: dev
 
 spring:
   application:

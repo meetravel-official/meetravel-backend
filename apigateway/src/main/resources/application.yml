@@ -1,3 +1,6 @@
+---
+spring.config.activate.on-profile: local
+
 server:
   port: 8000
 
@@ -37,10 +40,15 @@ spring:
 
 # config server actuator
 management:
+  endpoint:
+    configprops:
+      show-values: always
+    env:
+      show-values: always
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans, info
+        include: refresh, health, beans, info, configprops, env
 
 info:
   app:

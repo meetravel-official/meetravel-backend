@@ -1,0 +1,50 @@
+server:
+  port: 9002
+
+spring:
+  application:
+    name: matching-service
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    tagsSorter: alpha
+    operations-sorter: alpha
+    display-request-duration: true
+
+---
+spring.config.activate.on-profile: local
+
+spring:
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    format-sql: true
+    database: mysql
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MEETRAVEL_DB_LOCAL_URL}
+    username: ${MEETRAVEL_DB_USERNAME}
+    password: ${MEETRAVEL_DB_PASSWORD}
+
+# this actuator setting makes the service register
+management:
+  endpoint:
+    configprops:
+      show-values: always
+    env:
+      show-values: always
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, info, configprops, env
