@@ -1,5 +1,6 @@
 package com.meetravel.user_service.global.security;
 
+import com.meetravel.user_service.domain.user.enums.Role;
 import com.meetravel.user_service.global.jwt.JwtAuthenticationFilter;
 import com.meetravel.user_service.global.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -29,10 +30,8 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
-    private static final String[] PERMIT_URLS = {
-            "/auth/kakao/login",
-            "/swagger-ui/**","/v3/api-docs/**",
-            "/actuator/?*"
+    public static final String[] PERMIT_URL = {
+            "/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html"
     };
 
     private static final String[] GetMethodPermitURL = {
@@ -50,9 +49,9 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 //== URL별 권한 관리 옵션 ==//
                 .authorizeHttpRequests((authorize) -> authorize
-                    .requestMatchers("/users/**").hasRole("USER")
-                    .requestMatchers(PERMIT_URLS).permitAll()
-                    .requestMatchers(HttpMethod.GET, GetMethodPermitURL).permitAll()
+                        .requestMatchers(PERMIT_URL).permitAll()
+                        .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.GET, GetMethodPermitURL).permitAll()
                     .anyRequest().authenticated()
                 )
                 .exceptionHandling((exceptionConfig) ->
@@ -60,7 +59,7 @@ public class SecurityConfig {
                                 .authenticationEntryPoint(customAuthenticationEntryPoint)
                                 .accessDeniedHandler(customAccessDeniedHandler)
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtService),
+                .addFilterBefore(new JwtAuthenticationFilter(jwtService, customAuthenticationEntryPoint),
                         UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
