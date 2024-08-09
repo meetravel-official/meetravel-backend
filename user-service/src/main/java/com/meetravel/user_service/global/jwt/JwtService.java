@@ -1,6 +1,8 @@
 package com.meetravel.user_service.global.jwt;
 
+import com.meetravel.module_common.utils.TimeUtils;
 import com.meetravel.user_service.domain.auth.dto.response.LoginResponse;
+import com.meetravel.user_service.domain.token.service.RefreshTokenService;
 import com.meetravel.user_service.domain.user.enums.TokenType;
 import com.meetravel.user_service.global.security.CustomUserDetailsService;
 import io.jsonwebtoken.*;
@@ -16,6 +18,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,46 +32,51 @@ public class JwtService {
     private final Key key;
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtProperties jwtProperties;
+    private final RefreshTokenService refreshTokenService;
 
     // application.yml에서 secret 값 가져와서 key에 저장
-    public JwtService(CustomUserDetailsService customUserDetailsService, JwtProperties jwtProperties) {
+    public JwtService(CustomUserDetailsService customUserDetailsService, JwtProperties jwtProperties, RefreshTokenService refreshTokenService) {
         byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecretKey());
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.customUserDetailsService = customUserDetailsService;
         this.jwtProperties = jwtProperties;
-
+        this.refreshTokenService = refreshTokenService;
     }
 
     public LoginResponse createJwtToken(String userId, boolean isTemporary) {
 
-        long now = (new Date()).getTime();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime accessTokenExpiresAt = now.plus(jwtProperties.getToken().getAccess().getExpiration(), ChronoUnit.MILLIS);
+        LocalDateTime refreshTokenExpiresAt = now.plus(jwtProperties.getToken().getRefresh().getExpiration(), ChronoUnit.MILLIS);
 
-        Date accessTokenExpiresIn = new Date(now + jwtProperties.getAccess().getExpiration());
-        Date refreshTokenExpiresIn = new Date(now + jwtProperties.getRefresh().getExpiration());
+        // LocalDateTime을 Date로 변환
+        Date accessTokenExpiresDate = Date.from(accessTokenExpiresAt.atZone(ZoneId.systemDefault()).toInstant());
+        Date refreshTokenExpiresDate = Date.from(refreshTokenExpiresAt.atZone(ZoneId.systemDefault()).toInstant());
+
 
         // Access Token 생성
-        String accessToken = createAccessToken(userId, isTemporary, accessTokenExpiresIn);
+        String accessToken = createAccessToken(userId, isTemporary, accessTokenExpiresDate);
         // Refresh Token 생성
-        String refreshToken = createRefreshToken(userId, isTemporary, refreshTokenExpiresIn);
+        String refreshToken = createRefreshToken(userId, isTemporary, refreshTokenExpiresDate);
 
         return LoginResponse.builder()
                 .grantType("Bearer ")
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
-                .refreshTokenExpiresIn(refreshTokenExpiresIn.getTime())
+                .accessTokenExpiresAt(accessTokenExpiresAt)
+                .refreshTokenExpiresAt(refreshTokenExpiresAt)
                 .build();
     }
 
     public Map<String, Object> setClaims(String userId, boolean isTemporary) {
         // 클레임 설정
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userId);
-        claims.put("isTemporary", isTemporary);
+        claims.put("userId", userId);               // 사용자 ID
+        claims.put("isTemporary", isTemporary);     // 임시 여부
         return claims;
     }
 
-    public String createAccessToken(String userId, boolean isTemporary, Date expirationTime) {
+    public String createAccessToken(String userId, boolean isTemporary, Date expirationDate) {
 
         // 클레임 설정
         Map<String, Object> claims = this.setClaims(userId, isTemporary);
@@ -74,8 +84,8 @@ public class JwtService {
         return Jwts.builder()
                 .setSubject(TokenType.ACCESS.name())    // 토큰 제목
                 .setIssuedAt(new Date())                // 토큰 발급 시간
-                .setExpiration(expirationTime)          // 토큰 만료 시간
-                .setClaims(claims)                  // 클레임 설정
+                .setExpiration(expirationDate)          // 토큰 만료 시간
+                .addClaims(claims)                      // 클레임 추가
                 .signWith(key)
                 .compact();
 
@@ -84,13 +94,13 @@ public class JwtService {
     public String createRefreshToken(String userId, boolean isTemporary, Date expirationTime) {
         // 클레임 설정
         Map<String, Object> claims = this.setClaims(userId, isTemporary);
+
         return Jwts.builder()
-                .setSubject(TokenType.REFRESH.name())   // 토큰 제목
+                .setSubject(TokenType.REFRESH.name())    // 토큰 제목
                 .setIssuedAt(new Date())                // 토큰 발급 시간
                 .setExpiration(expirationTime)          // 토큰 만료 시간
-                .setClaims(claims)      // 클레임 설정
+                .addClaims(claims)                      // 클레임 추가     // 클레임 설정
                 .signWith(key)
-                .setHeaderParam("typ", "JWT")
                 .compact();
     }
 
@@ -132,8 +142,8 @@ public class JwtService {
         }
     }
 
-    public String getAccessToken(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(jwtProperties.getAccess().getHeader());
+    public String getToken(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(jwtProperties.getToken().getHeader());
 
         if (authorizationHeader != null && !authorizationHeader.equals("")) {
             if (authorizationHeader.startsWith("Bearer") && authorizationHeader.length() > 7) {
@@ -142,19 +152,6 @@ public class JwtService {
             }
         }
 
-        return null; // 헤더 비어있으면 null 리턴
-    }
-
-
-    public String getRefreshToken(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(jwtProperties.getRefresh().getHeader());
-
-        if (authorizationHeader != null && !authorizationHeader.equals("")) {
-            if (authorizationHeader.startsWith("Bearer") && authorizationHeader.length() > 7) {
-                String refreshToken = authorizationHeader.substring(7); // refresh 추출
-                return refreshToken;
-            }
-        }
         return null; // 헤더 비어있으면 null 리턴
     }
 
@@ -190,13 +187,29 @@ public class JwtService {
         return claims.get("isTemporary", Boolean.class);
     }
 
-    public Long getExpiration(String accessToken) {
+    public LocalDateTime getExpiration(String token) {
         // accessToken 남은 유효시간
-        Date expiration = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody().getExpiration();
-        // 현재 시간
-        Long now = new Date().getTime();
-        return (expiration.getTime() - now);
+        Date expirationDate = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getExpiration();
+
+        // Date -> LocalDateTime 변환
+        return TimeUtils.convertDateToLocalDateTime(expirationDate);
     }
+
+    // access 토큰 여부
+    public boolean isAccessToken(String token) {
+        Claims claims = parseClaims(token);
+        String subject = claims.getSubject();
+        return TokenType.ACCESS.name().equals(subject);
+    }
+
+
+    // refresh 토큰 여부
+    public boolean isRefreshToken(String token) {
+        Claims claims = parseClaims(token);
+        String subject = claims.getSubject();
+        return TokenType.REFRESH.name().equals(subject);
+    }
+
 
     // 응답 헤더에 accessToken 세팅
     public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
@@ -206,5 +219,18 @@ public class JwtService {
     // 응답 헤더에 refreshToken 세팅
     public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
         response.setHeader("Authorization-refresh", "Bearer " + refreshToken);
+    }
+
+    /** 일단 사용 X
+     public boolean isTokenBlacklisted(String refreshToken) {
+     return blackListTokenService.isTokenBlacklisted(refreshToken);
+     }*/
+
+    public boolean isUserRefreshTokenValid(String userId, String refreshToken) {
+        return refreshTokenService.isUserRefreshTokenValid(userId, refreshToken);
+    }
+
+    public void saveOrReplaceRefreshToken(String userId, String refreshToken, LocalDateTime expiresAt) {
+        refreshTokenService.saveOrReplaceRefreshToken(userId, refreshToken, expiresAt);
     }
 }

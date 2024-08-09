@@ -50,10 +50,10 @@ public class SignUpService {
         UserEntity user = UserEntity.builder()
                 .userId(signUpRequest.getUserId())
                 .name(signUpRequest.getName())
-                .nickName(signUpRequest.getNickName())
+                .nickname(signUpRequest.getNickname())
                 .birthDate(signUpRequest.getBirthDate())
                 .phoneNumber(signUpRequest.getPhoneNumber())
-                .profileImage(signUpRequest.getProfileImage())
+                .profileImageUrl(signUpRequest.getProfileImageUrl())
                 .travelFrequency(signUpRequest.getTravelFrequency())
                 .scheduleType(signUpRequest.getScheduleType())
                 .planningType(signUpRequest.getPlanningType())
@@ -120,7 +120,6 @@ public class SignUpService {
 
             // 각 객체로 불러올 수 있도록 리스트에 담아줌
             user.addUserPrefTravelDest(userPrefTravelDest);
-            travelDest.addUserPrefTravelDest(userPrefTravelDest);
         }
 
     }
