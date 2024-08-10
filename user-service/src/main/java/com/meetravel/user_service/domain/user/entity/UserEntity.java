@@ -34,7 +34,7 @@ public class UserEntity extends BaseEntity {
     private String name;
 
     @Column(name = "NICKNAME")
-    private String nickName;
+    private String nickname;
 
     @Column(name = "BIRTH_DATE")
     private LocalDate birthDate;
@@ -42,8 +42,8 @@ public class UserEntity extends BaseEntity {
     @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
 
-    @Column(name = "PROFILE_IMAGE")
-    private String profileImage;
+    @Column(name = "PROFILE_IMAGE_URL")
+    private String profileImageUrl;
 
     @Column(name = "TRAVEL_COUNT")
     @Convert(converter = TravelDestConverter.class)
@@ -77,6 +77,9 @@ public class UserEntity extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private Set<UserPrefTravelDestEntity> userPrefTravelDests = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private Set<UserReviewEntity> reviews = new HashSet<>();
 
 
     // 회원의 선호여행지 추가(등록)

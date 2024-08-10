@@ -14,10 +14,10 @@ public class SignUpRequest {
     @NotBlank
     private String userId;
     private String name;
-    private String nickName;
+    private String nickname;
     private LocalDate birthDate;
     private String phoneNumber;
-    private String profileImage;
+    private String profileImageUrl;
     private TravelFrequency travelFrequency;
     private ScheduleType scheduleType;
     private PlanningType planningType;
